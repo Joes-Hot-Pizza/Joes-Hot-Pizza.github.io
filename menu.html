@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Menu | Joe's Hot Pizza</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fire: #ff4d2d;
+    --gold: #f5a623;
+    --amber: #e8901a;
+    --dark: #111;
+    --card: #1a1a1a;
+    --card2: #202020;
+    --border: rgba(255,255,255,0.07);
+    --muted: rgba(255,255,255,0.42);
+    --green: #27ae60;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: white;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 200;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 60px;
+    background: rgba(17,17,17,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 900; color: var(--fire);
+    text-decoration: none;
+  }
+  nav ul { display: flex; list-style: none; gap: 32px; }
+  nav a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  nav a:hover { color: white; }
+  nav a.active { color: white; }
+  .nav-cta {
+    background: var(--fire); color: white !important;
+    padding: 10px 22px; border-radius: 30px;
+  }
+
+  /* ── HERO BANNER ── */
+  .menu-hero {
+    text-align: center;
+    padding: 72px 40px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .menu-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,77,45,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .menu-hero-label {
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--fire); margin-bottom: 14px; font-weight: 600;
+  }
+  .menu-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 6vw, 72px);
+    font-weight: 900; letter-spacing: -2px; line-height: 1;
+    margin-bottom: 18px;
+  }
+  .menu-hero h1 em { font-style: italic; color: var(--fire); }
+  .menu-hero p {
+    color: var(--muted); font-size: 16px; max-width: 520px; margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+
+  /* ── CATEGORY TABS ── */
+  .cat-tabs {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;
+    padding: 0 40px 56px;
+  }
+  .cat-tab {
+    padding: 10px 22px; border-radius: 30px;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--muted); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .cat-tab:hover { color: white; border-color: rgba(255,255,255,0.2); }
+  .cat-tab.active {
+    background: rgba(255,77,45,0.15);
+    border-color: var(--fire); color: white;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .menu-content {
+    max-width: 1260px; margin: 0 auto;
+    padding: 0 40px 100px;
+  }
+
+  /* Section header */
+  .menu-section { margin-bottom: 72px; }
+  .menu-section:last-child { margin-bottom: 0; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 20px;
+    margin-bottom: 32px;
+  }
+  .section-header-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: rgba(255,77,45,0.12); border: 1px solid rgba(255,77,45,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 900; letter-spacing: -0.5px;
+  }
+  .section-header-line {
+    flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── PIZZA GRID ── */
+  .pizza-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .pizza-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex; flex-direction: column;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pizza-item::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--fire), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .pizza-item:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,77,45,0.25);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+  }
+  .pizza-item:hover::before { opacity: 1; }
+
+  .item-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 8px;
+  }
+  .item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+  }
+  .item-price {
+    font-size: 19px; font-weight: 700; color: var(--gold);
+    white-space: nowrap; margin-left: 12px;
+  }
+  .item-desc {
+    font-size: 13px; color: var(--muted); line-height: 1.6;
+    flex: 1; margin-bottom: 20px;
+  }
+  .item-tags {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
+  }
+  .tag {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .tag.spicy { background: rgba(255,77,45,0.1); color: #ff8060; border-color: rgba(255,77,45,0.2); }
+  .tag.veggie { background: rgba(39,174,96,0.1); color: #5dde8e; border-color: rgba(39,174,96,0.2); }
+  .tag.popular { background: rgba(245,166,35,0.1); color: var(--gold); border-color: rgba(245,166,35,0.2); }
+
+  .add-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 11px;
+    background: rgba(255,77,45,0.1); border: 1px solid rgba(255,77,45,0.25);
+    color: var(--fire); border-radius: 12px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .add-btn:hover {
+    background: var(--fire); color: white; border-color: var(--fire);
+  }
+  .add-btn.added {
+    background: rgba(39,174,96,0.15); border-color: rgba(39,174,96,0.4);
+    color: #5dde8e;
+  }
+
+  /* ── SIDES / DRINKS / SANDWICHES / ICE CREAM ── */
+  .list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .list-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex; align-items: center; gap: 14px;
+    transition: all 0.2s;
+  }
+  .list-item:hover {
+    border-color: rgba(255,77,45,0.2);
+    transform: translateX(4px);
+  }
+  .list-icon {
+    font-size: 26px; flex-shrink: 0;
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.04); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .list-info { flex: 1; }
+  .list-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .list-sub { font-size: 12px; color: var(--muted); }
+  .list-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .list-price { font-size: 17px; font-weight: 700; color: var(--gold); white-space: nowrap; }
+  .list-add {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,77,45,0.1); border: 1px solid rgba(255,77,45,0.25);
+    color: var(--fire); font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif; flex-shrink: 0;
+  }
+  .list-add:hover { background: var(--fire); color: white; border-color: var(--fire); }
+  .list-add.added { background: rgba(39,174,96,0.15); border-color: rgba(39,174,96,0.4); color: #5dde8e; }
+
+  /* Drinks: no price variant */
+  .drink-sub { font-size: 12px; color: var(--muted); }
+
+  /* ── FLOATING CART ── */
+  .cart-bar {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    background: var(--card2);
+    border: 1px solid rgba(255,77,45,0.35);
+    border-radius: 50px;
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    z-index: 150;
+    opacity: 0; pointer-events: none;
+    transform: translateX(-50%) translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    white-space: nowrap;
+  }
+  .cart-bar.visible {
+    opacity: 1; pointer-events: all;
+    transform: translateX(-50%) translateY(0);
+  }
+  .cart-count {
+    background: var(--fire); color: white;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .cart-label { font-size: 14px; font-weight: 500; }
+  .cart-total { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .cart-goto {
+    padding: 10px 22px; background: var(--fire); color: white;
+    border-radius: 30px; border: none; font-size: 14px; font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    transition: opacity 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .cart-goto:hover { opacity: 0.85; }
+
+  /* ── SECTION FILTER ── */
+  .section-anchor { scroll-margin-top: 90px; }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    nav ul { display: none; }
+    .menu-hero { padding: 56px 20px 40px; }
+    .cat-tabs { padding: 0 20px 40px; }
+    .menu-content { padding: 0 20px 80px; }
+    .pizza-grid { grid-template-columns: 1fr; }
+    .list-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🍕 Joe's</a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="menu.html" class="active">Menu</a></li>
+    <li><a href="order.html" class="nav-cta">Order Now</a></li>
+  </ul>
+</nav>
+
+<div class="menu-hero">
+  <div class="menu-hero-label">Full Menu</div>
+  <h1>Everything <em>delicious</em></h1>
+  <p>From our legendary pizzas to ice cold drinks and creamy desserts — there's something for everyone.</p>
+</div>
+
+<div class="cat-tabs">
+  <div class="cat-tab active" data-target="pizzas">🍕 Pizzas</div>
+  <div class="cat-tab" data-target="sides">🍞 Sides & Breads</div>
+  <div class="cat-tab" data-target="sandwiches">🥪 Sandwiches</div>
+  <div class="cat-tab" data-target="drinks">🥤 Drinks</div>
+  <div class="cat-tab" data-target="icecream">🍦 Ice Cream</div>
+</div>
+
+<div class="menu-content">
+
+  <!-- PIZZAS -->
+  <div class="menu-section section-anchor" id="pizzas">
+    <div class="section-header">
+      <div class="section-header-icon">🍕</div>
+      <h2>Pizzas</h2>
+      <div class="section-header-line"></div>
+    </div>
+    <div class="pizza-grid" id="pizzaGrid"></div>
+  </div>
+
+  <!-- SIDES & BREADS -->
+  <div class="menu-section section-anchor" id="sides">
+    <div class="section-header">
+      <div class="section-header-icon">🍞</div>
+      <h2>Sides & Breads</h2>
+      <div class="section-header-line"></div>
+    </div>
+    <div class="list-grid" id="sidesGrid"></div>
+  </div>
+
+  <!-- SANDWICHES -->
+  <div class="menu-section section-anchor" id="sandwiches">
+    <div class="section-header">
+      <div class="section-header-icon">🥪</div>
+      <h2>Sandwiches</h2>
+      <div class="section-header-line"></div>
+    </div>
+    <div class="list-grid" id="sandwichGrid"></div>
+  </div>
+
+  <!-- DRINKS -->
+  <div class="menu-section section-anchor" id="drinks">
+    <div class="section-header">
+      <div class="section-header-icon">🥤</div>
+      <h2>Drinks</h2>
+      <div class="section-header-line"></div>
+    </div>
+    <div class="list-grid" id="drinksGrid"></div>
+  </div>
+
+  <!-- ICE CREAM -->
+  <div class="menu-section section-anchor" id="icecream">
+    <div class="section-header">
+      <div class="section-header-icon">🍦</div>
+      <h2>Ice Cream</h2>
+      <div class="section-header-line"></div>
+    </div>
+    <div class="list-grid" id="icecreamGrid"></div>
+  </div>
+
+</div>
+
+<!-- FLOATING CART -->
+<div class="cart-bar" id="cartBar">
+  <div class="cart-count" id="cartCount">0</div>
+  <div class="cart-label">items in cart</div>
+  <div class="cart-total" id="cartTotal">$0.00</div>
+  <a href="order.html" class="cart-goto" id="cartGoto">View Order →</a>
+</div>
+
+<script>
+// ── Menu Data ──────────────────────────────────────────────────────────────
+const MENU = {
+  pizzas: [
+    { id: 'p1', name: 'Joe Mama', price: 14.99, desc: 'Spicy sausage, pepperoni, jalapeños, onions & extra cheese', tags: ['spicy', 'popular'] },
+    { id: 'p2', name: 'You.', price: 13.99, desc: 'Pepperoni, bacon, mushrooms, black olives & extra cheese', tags: ['popular'] },
+    { id: 'p3', name: 'Margherita', price: 12.99, desc: 'Fresh mozzarella, tomato, basil & olive oil', tags: ['veggie'] },
+    { id: 'p4', name: "Meat Lover's", price: 15.99, desc: 'Pepperoni, sausage, ham, bacon & beef', tags: ['popular'] },
+    { id: 'p5', name: 'Hawaiian', price: 12.49, desc: 'Ham, pineapple & mozzarella', tags: [] },
+    { id: 'p6', name: 'Veggie Supreme', price: 13.49, desc: 'Peppers, onions, mushrooms, olives & spinach', tags: ['veggie'] },
+    { id: 'p7', name: 'BBQ Chicken', price: 14.49, desc: 'Grilled chicken, BBQ sauce & red onions', tags: [] },
+    { id: 'p8', name: 'Supreme Combo', price: 15.99, desc: 'Pepperoni, sausage, bell peppers, onions & olives', tags: ['popular'] },
+  ],
+  sides: [
+    { id: 's1', name: 'Garlic Bread', price: 5.99, icon: '🥖', desc: 'Toasted with garlic butter' },
+    { id: 's2', name: 'Cheesy Bread', price: 6.49, icon: '🧀', desc: 'Loaded with melted cheese' },
+    { id: 's3', name: 'Naan Bread', price: 4.99, icon: '🫓', desc: 'Soft & fluffy naan' },
+    { id: 's4', name: 'Mozzarella Sticks', price: 7.49, icon: '🧆', desc: 'Crispy, gooey mozzarella' },
+    { id: 's5', name: 'Marinara Sauce', price: 1.00, icon: '🍅', desc: 'Dipping sauce' },
+    { id: 's6', name: 'Ranch Sauce', price: 1.00, icon: '🥛', desc: 'Dipping sauce' },
+    { id: 's7', name: 'Garlic Sauce', price: 1.00, icon: '🧄', desc: 'Dipping sauce' },
+    { id: 's8', name: 'BBQ Sauce', price: 1.00, icon: '🍯', desc: 'Dipping sauce' },
+  ],
+  sandwiches: [
+    { id: 'w1', name: 'Italian Sub', price: 8.99, icon: '🥪', desc: 'Classic Italian meats & veggies' },
+    { id: 'w2', name: 'Chicken Parmesan', price: 9.49, icon: '🍗', desc: 'Crispy chicken, marinara & parm' },
+    { id: 'w3', name: 'Meatball Sub', price: 8.79, icon: '🫓', desc: 'Hearty meatballs in marinara' },
+    { id: 'w4', name: 'Turkey & Swiss', price: 8.99, icon: '🦃', desc: 'Sliced turkey with Swiss cheese' },
+  ],
+  drinks: [
+    { id: 'd1', name: 'Pepsi', price: 2.49, icon: '🥤', desc: 'Ice cold' },
+    { id: 'd2', name: 'Diet Pepsi', price: 2.49, icon: '🥤', desc: 'Ice cold' },
+    { id: 'd3', name: 'Mountain Dew', price: 2.49, icon: '🥤', desc: 'Ice cold' },
+    { id: 'd4', name: 'Iced Tea', price: 2.29, icon: '🧋', desc: 'Freshly brewed' },
+    { id: 'd5', name: 'Lemonade', price: 2.29, icon: '🍋', desc: 'Freshly squeezed' },
+    { id: 'd6', name: 'Bottled Water', price: 1.99, icon: '💧', desc: 'Still water' },
+    { id: 'd7', name: 'Orange Juice', price: 2.49, icon: '🍊', desc: 'Freshly squeezed' },
+    { id: 'd8', name: 'Iced Coffee', price: 2.99, icon: '☕', desc: 'Cold brew style' },
+  ],
+  icecream: [
+    { id: 'i1', name: 'Chocolate', price: 3.99, icon: '🍫', desc: 'Rich & creamy' },
+    { id: 'i2', name: 'Vanilla', price: 3.99, icon: '🍦', desc: 'Classic smooth' },
+    { id: 'i3', name: 'Strawberry', price: 3.99, icon: '🍓', desc: 'Fresh & fruity' },
+    { id: 'i4', name: 'Cookies & Cream', price: 4.49, icon: '🍪', desc: 'Oreo chunks' },
+    { id: 'i5', name: 'Mint Choc Chip', price: 4.49, icon: '🌿', desc: 'Cool & minty' },
+    { id: 'i6', name: 'Rocky Road', price: 4.49, icon: '🥜', desc: 'Nuts & marshmallow' },
+    { id: 'i7', name: 'Salted Caramel', price: 4.49, icon: '🧂', desc: 'Sweet & salty' },
+    { id: 'i8', name: 'Cookie Dough', price: 4.49, icon: '🍪', desc: 'Chunks of dough' },
+    { id: 'i9', name: 'Triple Berry', price: 4.49, icon: '🫐', desc: 'Mixed berry swirl' },
+  ],
+};
+
+// ── Cart ──────────────────────────────────────────────────────────────────
+let cart = JSON.parse(sessionStorage.getItem('joes_cart') || '[]');
+
+function saveCart() {
+  sessionStorage.setItem('joes_cart', JSON.stringify(cart));
+}
+
+function addToCart(item) {
+  const existing = cart.find(c => c.id === item.id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...item, qty: 1 });
+  }
+  saveCart();
+  updateCartBar();
+}
+
+function updateCartBar() {
+  const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const count = cart.reduce((s, c) => s + c.qty, 0);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartTotal').textContent = '$' + total.toFixed(2);
+  const bar = document.getElementById('cartBar');
+  if (count > 0) bar.classList.add('visible');
+  else bar.classList.remove('visible');
+}
+
+// ── Render Functions ────────────────────────────────────────────────────────
+function tagBadge(tag) {
+  const labels = { spicy: '🌶 Spicy', veggie: '🌿 Veggie', popular: '⭐ Popular' };
+  return `<span class="tag ${tag}">${labels[tag] || tag}</span>`;
+}
+
+function renderPizzas() {
+  const grid = document.getElementById('pizzaGrid');
+  grid.innerHTML = MENU.pizzas.map(p => `
+    <div class="pizza-item">
+      <div class="item-top">
+        <div class="item-name">${p.name}</div>
+        <div class="item-price">$${p.price.toFixed(2)}</div>
+      </div>
+      <div class="item-desc">${p.desc}</div>
+      ${p.tags.length ? `<div class="item-tags">${p.tags.map(tagBadge).join('')}</div>` : ''}
+      <button class="add-btn" data-id="${p.id}" onclick="handleAdd(this, ${JSON.stringify(p).replace(/"/g, '&quot;')})">
+        + Add to Order
+      </button>
+    </div>
+  `).join('');
+}
+
+function renderListGrid(containerId, items) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = items.map(item => `
+    <div class="list-item">
+      <div class="list-icon">${item.icon}</div>
+      <div class="list-info">
+        <div class="list-name">${item.name}</div>
+        <div class="list-sub">${item.desc}</div>
+      </div>
+      <div class="list-right">
+        <div class="list-price">$${item.price.toFixed(2)}</div>
+        <button class="list-add" data-id="${item.id}" onclick="handleAdd(this, ${JSON.stringify(item).replace(/"/g, '&quot;')})">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function handleAdd(btn, item) {
+  addToCart(item);
+  const orig = btn.innerHTML;
+  btn.classList.add('added');
+  btn.innerHTML = btn.classList.contains('list-add') ? '✓' : '✓ Added!';
+  setTimeout(() => {
+    btn.classList.remove('added');
+    btn.innerHTML = btn.classList.contains('list-add') ? '+' : orig;
+  }, 1200);
+}
+
+// ── Category tabs ──────────────────────────────────────────────────────────
+document.querySelectorAll('.cat-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ── Init ───────────────────────────────────────────────────────────────────
+renderPizzas();
+renderListGrid('sidesGrid', MENU.sides);
+renderListGrid('sandwichGrid', MENU.sandwiches);
+renderListGrid('drinksGrid', MENU.drinks);
+renderListGrid('icecreamGrid', MENU.icecream);
+updateCartBar();
+</script>
+</body>
+</html>

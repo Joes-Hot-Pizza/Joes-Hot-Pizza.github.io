@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Joe's Hot Pizza</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fire: #ff4d2d;
+    --gold: #f5a623;
+    --cream: #fdf6ec;
+    --dark: #111;
+    --card: #1c1c1c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: white;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 60px;
+    background: rgba(17,17,17,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    z-index: 999;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 900; color: var(--fire);
+    letter-spacing: -0.5px;
+  }
+
+  nav ul { display: flex; list-style: none; gap: 36px; }
+  nav a {
+    text-decoration: none; color: rgba(255,255,255,0.6);
+    font-size: 14px; font-weight: 500; letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+  nav a:hover, nav a.active { color: white; }
+
+  .nav-cta {
+    background: var(--fire); color: white !important;
+    padding: 10px 22px; border-radius: 30px;
+    font-weight: 500 !important;
+  }
+  .nav-cta:hover { opacity: 0.9; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 120px 60px 80px;
+    gap: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(255,77,45,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-text { z-index: 1; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,77,45,0.15); border: 1px solid rgba(255,77,45,0.3);
+    color: var(--fire); padding: 6px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 500; margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 6vw, 80px);
+    font-weight: 900; line-height: 1.05;
+    letter-spacing: -2px;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  .hero h1 em {
+    font-style: italic; color: var(--fire);
+  }
+
+  .hero-sub {
+    margin: 24px 0 40px;
+    font-size: 17px; color: rgba(255,255,255,0.55);
+    line-height: 1.7; max-width: 480px;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-btns {
+    display: flex; gap: 16px;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .btn-primary {
+    padding: 16px 36px; border-radius: 40px;
+    background: var(--fire); color: white;
+    font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer; text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(255,77,45,0.45);
+  }
+
+  .btn-ghost {
+    padding: 16px 36px; border-radius: 40px;
+    background: transparent; color: white;
+    font-size: 15px; font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.15); cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.05);
+  }
+
+  /* Hero Pizza */
+  .hero-visual {
+    display: flex; justify-content: center; align-items: center;
+    position: relative;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  .hero-pizza-wrap {
+    position: relative;
+    width: 420px; height: 420px;
+  }
+
+  .hero-pizza-wrap canvas {
+    filter: drop-shadow(0 30px 80px rgba(255,77,45,0.3));
+    animation: floatPizza 6s ease-in-out infinite;
+  }
+
+  @keyframes floatPizza {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-18px) rotate(3deg); }
+  }
+
+  .hero-ring {
+    position: absolute; inset: -30px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,77,45,0.15);
+    animation: spinRing 20s linear infinite;
+  }
+  .hero-ring-2 {
+    position: absolute; inset: -60px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255,77,45,0.08);
+    animation: spinRing 35s linear infinite reverse;
+  }
+
+  @keyframes spinRing { to { transform: rotate(360deg); } }
+
+  .floating-tag {
+    position: absolute;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-size: 13px;
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+  }
+  .floating-tag strong { display: block; font-size: 16px; color: var(--gold); }
+
+  .tag-1 { top: 10%; left: -5%; animation: float1 4s ease-in-out infinite; }
+  .tag-2 { bottom: 15%; right: -5%; animation: float1 5s 1s ease-in-out infinite; }
+
+  @keyframes float1 {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* STATS */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: rgba(255,255,255,0.06);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .stat {
+    padding: 40px 60px;
+    background: var(--dark);
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px; font-weight: 900;
+    color: var(--fire); line-height: 1;
+  }
+
+  .stat-label {
+    color: rgba(255,255,255,0.45);
+    font-size: 14px; margin-top: 8px;
+  }
+
+  /* MENU */
+  .menu {
+    padding: 120px 60px;
+  }
+
+  .section-label {
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--fire); margin-bottom: 16px; font-weight: 500;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 4vw, 52px); font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 60px;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .pizza-card {
+    background: var(--card);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    display: block;
+  }
+
+  .pizza-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    border-color: rgba(255,77,45,0.25);
+  }
+
+  .card-img-wrap {
+    position: relative;
+    background: #222;
+    display: flex; justify-content: center; align-items: center;
+    height: 220px; overflow: hidden;
+  }
+
+  .card-badge {
+    position: absolute; top: 14px; left: 14px;
+    background: var(--fire); color: white;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    padding: 4px 12px; border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  .card-body { padding: 24px; }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; margin-bottom: 8px;
+  }
+
+  .card-desc {
+    color: rgba(255,255,255,0.45);
+    font-size: 14px; line-height: 1.6; margin-bottom: 20px;
+  }
+
+  .card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .card-price {
+    font-size: 22px; font-weight: 700; color: var(--gold);
+  }
+
+  .card-btn {
+    background: rgba(255,77,45,0.1);
+    color: var(--fire);
+    border: 1px solid rgba(255,77,45,0.25);
+    padding: 8px 18px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .pizza-card:hover .card-btn {
+    background: var(--fire);
+    color: white;
+    border-color: var(--fire);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 40px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: rgba(255,255,255,0.3); font-size: 13px;
+  }
+
+  footer .nav-logo { font-size: 18px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding: 100px 30px 60px; text-align: center; }
+    .hero-btns { justify-content: center; }
+    .hero-visual { display: none; }
+    nav { padding: 18px 30px; }
+    nav ul { display: none; }
+    .stats { grid-template-columns: 1fr; }
+    .menu { padding: 80px 30px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🍕 Joe's Hot Pizza</div>
+  <ul>
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="menu.html">Menu</a></li>
+    <li><a href="order.html" class="nav-cta">Order Now</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-badge">🔥 Fresh out the oven</div>
+    <h1>Pizza made with <em>fire</em> & soul.</h1>
+    <p class="hero-sub">Handcrafted dough, premium toppings, and that perfect char. Every pizza is made to order and delivered piping hot to your door.</p>
+    <div class="hero-btns">
+      <a href="order.html" class="btn-primary">Build Your Pizza →</a>
+      <a href="menu.html" class="btn-ghost">See Menu</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-pizza-wrap">
+      <div class="hero-ring"></div>
+      <div class="hero-ring-2"></div>
+      <canvas id="heroPizza" width="420" height="420"></canvas>
+      <div class="floating-tag tag-1">
+        <strong>4.9 ★</strong>
+        2,400+ reviews
+      </div>
+      <div class="floating-tag tag-2">
+        <strong>25 min</strong>
+        avg delivery
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">12K+</div>
+    <div class="stat-label">Pizzas delivered this month</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">4.9</div>
+    <div class="stat-label">Average rating from 2,400 reviews</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">25m</div>
+    <div class="stat-label">Average delivery time</div>
+  </div>
+</div>
+
+<section class="menu" id="menu">
+  <div class="section-label">Our Menu</div>
+  <h2 class="section-title">Popular Picks</h2>
+
+  <div class="menu-grid" id="menuGrid"></div>
+</section>
+
+<footer>
+  <div class="nav-logo">🍕 Joe's Hot Pizza</div>
+  <div>© 2026 Joe's Hot Pizza · All rights reserved</div>
+</footer>
+
+<script>
+// ─── Draw Hero Pizza ───────────────────────────────────────────────────────
+const heroCanvas = document.getElementById('heroPizza');
+const ctx = heroCanvas.getContext('2d');
+const cx = 210, cy = 210, R = 190;
+
+function drawHeroPizza() {
+  ctx.clearRect(0, 0, 420, 420);
+
+  // Crust outer
+  const crustGrad = ctx.createRadialGradient(cx, cy, R * 0.75, cx, cy, R);
+  crustGrad.addColorStop(0, '#c97b2a');
+  crustGrad.addColorStop(0.5, '#b5651d');
+  crustGrad.addColorStop(1, '#8b4513');
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fillStyle = crustGrad; ctx.fill();
+
+  // Crust texture bumps
+  for (let a = 0; a < Math.PI * 2; a += 0.28) {
+    const bx = cx + (R - 10) * Math.cos(a);
+    const by = cy + (R - 10) * Math.sin(a);
+    ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(180,100,30,0.35)'; ctx.fill();
+  }
+
+  // Sauce base
+  const sauceGrad = ctx.createRadialGradient(cx - 20, cy - 20, 10, cx, cy, R * 0.77);
+  sauceGrad.addColorStop(0, '#e84b1e');
+  sauceGrad.addColorStop(0.6, '#c93a0e');
+  sauceGrad.addColorStop(1, '#a62e08');
+  ctx.beginPath(); ctx.arc(cx, cy, R * 0.77, 0, Math.PI * 2);
+  ctx.fillStyle = sauceGrad; ctx.fill();
+
+  // Cheese base
+  const cheeseGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.72);
+  cheeseGrad.addColorStop(0, '#f5c842');
+  cheeseGrad.addColorStop(0.4, '#eda820');
+  cheeseGrad.addColorStop(1, 'rgba(235,160,20,0)');
+  ctx.beginPath(); ctx.arc(cx, cy, R * 0.72, 0, Math.PI * 2);
+  ctx.fillStyle = cheeseGrad; ctx.fill();
+
+  // Cheese blobs (melted look)
+  const cheeseBlobPositions = [
+    [cx + 60, cy - 40], [cx - 70, cy + 30], [cx + 20, cy + 80],
+    [cx - 40, cy - 70], [cx + 90, cy + 60], [cx - 90, cy - 20],
+    [cx + 30, cy - 110], [cx - 60, cy + 95]
+  ];
+  cheeseBlobPositions.forEach(([bx, by]) => {
+    const g = ctx.createRadialGradient(bx, by, 2, bx, by, 32);
+    g.addColorStop(0, 'rgba(255,220,80,0.9)');
+    g.addColorStop(1, 'rgba(255,200,50,0)');
+    ctx.beginPath(); ctx.arc(bx, by, 32, 0, Math.PI * 2);
+    ctx.fillStyle = g; ctx.fill();
+  });
+
+  // Pepperoni
+  const pepp = [
+    [cx + 55, cy - 55], [cx - 65, cy + 50], [cx + 15, cy + 85],
+    [cx - 50, cy - 75], [cx + 95, cy + 55], [cx - 85, cy - 25],
+    [cx + 110, cy - 30], [cx - 25, cy + 120], [cx + 25, cy - 115],
+  ];
+  pepp.forEach(([px, py]) => {
+    // Shadow
+    ctx.beginPath(); ctx.arc(px + 2, py + 2, 18, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fill();
+    // Body
+    const pg = ctx.createRadialGradient(px - 4, py - 4, 2, px, py, 18);
+    pg.addColorStop(0, '#cc2b0a');
+    pg.addColorStop(0.6, '#a01e05');
+    pg.addColorStop(1, '#7a1500');
+    ctx.beginPath(); ctx.arc(px, py, 18, 0, Math.PI * 2);
+    ctx.fillStyle = pg; ctx.fill();
+    // Highlight
+    ctx.beginPath(); ctx.arc(px - 5, py - 5, 5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,100,70,0.35)'; ctx.fill();
+    // Dots
+    for (let d = 0; d < 5; d++) {
+      const da = (d / 5) * Math.PI * 2;
+      ctx.beginPath(); ctx.arc(px + 8 * Math.cos(da), py + 8 * Math.sin(da), 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(80,10,0,0.5)'; ctx.fill();
+    }
+  });
+
+  // Basil leaves
+  [[cx - 30, cy - 30, 0.4], [cx + 70, cy + 20, -0.8], [cx - 70, cy + 70, 1.2]].forEach(([lx, ly, rot]) => {
+    ctx.save();
+    ctx.translate(lx, ly); ctx.rotate(rot);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 14, 8, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#2d7a2d'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(0, 8);
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.restore();
+  });
+
+  // Gloss highlight
+  const gloss = ctx.createRadialGradient(cx - 60, cy - 60, 5, cx - 40, cy - 40, 120);
+  gloss.addColorStop(0, 'rgba(255,255,255,0.12)');
+  gloss.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fillStyle = gloss; ctx.fill();
+}
+
+drawHeroPizza();
+
+// ─── Menu Cards ────────────────────────────────────────────────────────────
+const pizzas = [
+  {
+    name: 'Joe Mama',
+    desc: 'The legend. Double pepperoni, smoked mozzarella, and a secret spice blend.',
+    price: '$14.99', badge: 'Bestseller',
+    toppings: ['pepperoni', 'basil'],
+    color: '#e84b1e'
+  },
+  {
+    name: 'Margherita',
+    desc: 'Neapolitan-style with fresh tomato, buffalo mozzarella, and torn basil.',
+    price: '$12.99', badge: 'Classic',
+    toppings: ['basil', 'tomato'],
+    color: '#f5a623'
+  },
+  {
+    name: 'Meat Lover\'s',
+    desc: 'Pepperoni, bacon crumble, ground beef, and caramelized onions.',
+    price: '$15.99', badge: 'Popular',
+    toppings: ['pepperoni', 'mushroom'],
+    color: '#c0392b'
+  },
+  {
+    name: 'Garden Fresh',
+    desc: 'Roasted peppers, mushrooms, red onion, olives, and herbed ricotta.',
+    price: '$13.99', badge: null,
+    toppings: ['mushroom', 'basil'],
+    color: '#27ae60'
+  },
+];
+
+function drawMiniPizza(canvas, toppings, accentColor) {
+  const c = canvas.getContext('2d');
+  const cw = canvas.width / 2, ch = canvas.height / 2, r = cw * 0.88;
+
+  // Crust
+  const cg = c.createRadialGradient(cw, ch, r * 0.7, cw, ch, r);
+  cg.addColorStop(0, '#c97b2a');
+  cg.addColorStop(1, '#8b4513');
+  c.beginPath(); c.arc(cw, ch, r, 0, Math.PI * 2);
+  c.fillStyle = cg; c.fill();
+
+  // Sauce
+  const sg = c.createRadialGradient(cw - 10, ch - 10, 5, cw, ch, r * 0.76);
+  sg.addColorStop(0, '#e84b1e');
+  sg.addColorStop(1, '#a62e08');
+  c.beginPath(); c.arc(cw, ch, r * 0.76, 0, Math.PI * 2);
+  c.fillStyle = sg; c.fill();
+
+  // Cheese
+  const chg = c.createRadialGradient(cw, ch, 0, cw, ch, r * 0.7);
+  chg.addColorStop(0, '#f5c842');
+  chg.addColorStop(1, 'rgba(235,160,20,0)');
+  c.beginPath(); c.arc(cw, ch, r * 0.7, 0, Math.PI * 2);
+  c.fillStyle = chg; c.fill();
+
+  if (toppings.includes('pepperoni')) {
+    [[cw + 28, ch - 22], [cw - 32, ch + 25], [cw + 10, ch + 40], [cw - 20, ch - 36], [cw + 42, ch + 28]].forEach(([px, py]) => {
+      const pg = c.createRadialGradient(px - 2, py - 2, 1, px, py, 9);
+      pg.addColorStop(0, '#cc2b0a');
+      pg.addColorStop(1, '#7a1500');
+      c.beginPath(); c.arc(px, py, 9, 0, Math.PI * 2);
+      c.fillStyle = pg; c.fill();
+    });
+  }
+
+  if (toppings.includes('mushroom')) {
+    [[cw + 25, ch + 20], [cw - 30, ch - 18], [cw + 5, ch - 38]].forEach(([mx, my]) => {
+      c.fillStyle = '#a0522d';
+      c.beginPath(); c.arc(mx, my, 9, Math.PI, 0); c.fill();
+      c.fillStyle = '#d2a679';
+      c.fillRect(mx - 3, my, 6, 7);
+    });
+  }
+
+  if (toppings.includes('basil') || toppings.includes('tomato')) {
+    [[cw - 15, ch - 15, 0.4], [cw + 32, ch + 10, -0.9], [cw - 32, ch + 32, 1.3]].forEach(([lx, ly, rot]) => {
+      c.save(); c.translate(lx, ly); c.rotate(rot);
+      c.beginPath(); c.ellipse(0, 0, 8, 5, 0, 0, Math.PI * 2);
+      c.fillStyle = '#2d7a2d'; c.fill(); c.restore();
+    });
+  }
+
+  // Gloss
+  const gl = c.createRadialGradient(cw - 30, ch - 30, 2, cw - 20, ch - 20, 60);
+  gl.addColorStop(0, 'rgba(255,255,255,0.15)');
+  gl.addColorStop(1, 'rgba(255,255,255,0)');
+  c.beginPath(); c.arc(cw, ch, r, 0, Math.PI * 2);
+  c.fillStyle = gl; c.fill();
+}
+
+const grid = document.getElementById('menuGrid');
+pizzas.forEach(p => {
+  const card = document.createElement('a');
+  card.href = 'order.html';
+  card.className = 'pizza-card';
+  card.innerHTML = `
+    <div class="card-img-wrap">
+      ${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}
+      <canvas width="220" height="220" style="border-radius:0"></canvas>
+    </div>
+    <div class="card-body">
+      <div class="card-title">${p.name}</div>
+      <div class="card-desc">${p.desc}</div>
+      <div class="card-footer">
+        <span class="card-price">${p.price}</span>
+        <span class="card-btn">Order →</span>
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+  const canvas = card.querySelector('canvas');
+  drawMiniPizza(canvas, p.toppings, p.color);
+});
+</script>
+</body>
+</html>

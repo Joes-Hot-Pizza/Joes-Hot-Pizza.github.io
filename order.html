@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Order | Joe's Hot Pizza</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fire: #ff4d2d;
+    --gold: #f5a623;
+    --dark: #111;
+    --card: #1a1a1a;
+    --card2: #202020;
+    --border: rgba(255,255,255,0.07);
+    --muted: rgba(255,255,255,0.42);
+  }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif;background:var(--dark);color:white;min-height:100vh; }
+
+  /* NAV */
+  nav {
+    position:sticky;top:0;z-index:200;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:20px 60px;
+    background:rgba(17,17,17,0.93);backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo { font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--fire);text-decoration:none; }
+  nav ul { display:flex;list-style:none;gap:32px; }
+  nav a { text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;transition:color .2s; }
+  nav a:hover,nav a.active { color:white; }
+
+  /* PAGE */
+  .page { display:grid;grid-template-columns:1fr 400px;min-height:calc(100vh - 66px); }
+
+  /* LEFT */
+  .left { border-right:1px solid var(--border);display:flex;flex-direction:column; }
+
+  .mode-tabs {
+    display:flex;border-bottom:1px solid var(--border);
+    position:sticky;top:66px;z-index:100;background:var(--dark);
+  }
+  .mode-tab {
+    flex:1;padding:18px;text-align:center;font-size:14px;font-weight:600;
+    color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;
+  }
+  .mode-tab:hover { color:white; }
+  .mode-tab.active { color:white;border-bottom-color:var(--fire); }
+
+  .panel { display:none;padding:40px 48px; }
+  .panel.active { display:block; }
+
+  /* BUILDER */
+  .panel-label { font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--fire);margin-bottom:10px;font-weight:600; }
+  .panel-title { font-family:'Playfair Display',serif;font-size:36px;font-weight:900;letter-spacing:-1px;margin-bottom:36px; }
+
+  .pizza-preview { display:flex;flex-direction:column;align-items:center;margin-bottom:44px; }
+  #pizzaCanvas { filter:drop-shadow(0 18px 50px rgba(255,77,45,.25)); }
+  .spin-hint { margin-top:12px;font-size:13px;color:var(--muted); }
+
+  .build-section { margin-bottom:32px; }
+  .build-head { font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:16px;font-weight:500; }
+
+  .pill-group { display:flex;flex-wrap:wrap;gap:9px; }
+  .pill {
+    padding:9px 18px;border-radius:30px;border:1px solid var(--border);background:var(--card);
+    color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;
+    display:flex;align-items:center;gap:7px;font-family:'DM Sans',sans-serif;
+  }
+  .pill:hover { border-color:rgba(255,255,255,.2);color:white; }
+  .pill.active { background:rgba(255,77,45,.15);border-color:var(--fire);color:white; }
+  .pill .pt { font-size:11px;color:var(--muted); }
+  .pill.active .pt { color:rgba(255,77,45,.7); }
+
+  .size-group { display:grid;grid-template-columns:repeat(3,1fr);gap:12px; }
+  .size-card {
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:16px 10px;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .size-card:hover { border-color:rgba(255,255,255,.18); }
+  .size-card.active { background:rgba(255,77,45,.1);border-color:var(--fire); }
+  .sz-icon { font-size:26px;margin-bottom:4px;transition:transform .2s; }
+  .size-card.active .sz-icon { transform:scale(1.1); }
+  .sz-label { font-size:13px;font-weight:600;margin-bottom:2px; }
+  .sz-price { font-size:11px;color:var(--muted); }
+  .size-card.active .sz-price { color:rgba(255,77,45,.8); }
+
+  .topping-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:9px; }
+  .topping-tile {
+    background:var(--card);border:1px solid var(--border);border-radius:13px;
+    padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;
+  }
+  .topping-tile:hover { border-color:rgba(255,255,255,.18); }
+  .topping-tile.active { background:rgba(255,77,45,.1);border-color:var(--fire); }
+  .t-icon { font-size:20px; }
+  .t-name { flex:1;font-size:13px;font-weight:500; }
+  .t-add {
+    width:22px;height:22px;border-radius:50%;border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);transition:all .2s;flex-shrink:0;
+  }
+  .topping-tile.active .t-add { background:var(--fire);border-color:var(--fire);color:white; }
+
+  .qty-control {
+    display:flex;align-items:center;background:var(--card);
+    border:1px solid var(--border);border-radius:40px;overflow:hidden;width:fit-content;
+  }
+  .qty-btn {
+    width:42px;height:42px;display:flex;align-items:center;justify-content:center;
+    background:none;border:none;color:white;font-size:18px;cursor:pointer;transition:background .2s;
+    font-family:'DM Sans',sans-serif;
+  }
+  .qty-btn:hover { background:rgba(255,255,255,.07); }
+  .qty-num { width:44px;text-align:center;font-size:17px;font-weight:600; }
+
+  .add-pizza-btn {
+    margin-top:24px;width:100%;padding:15px;
+    background:var(--fire);color:white;border:none;border-radius:40px;
+    font-size:15px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s;
+    font-family:'DM Sans',sans-serif;
+  }
+  .add-pizza-btn:hover { transform:translateY(-2px);box-shadow:0 10px 32px rgba(255,77,45,.4); }
+
+  /* MENU PANEL */
+  .menu-cats { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px; }
+  .mcat {
+    padding:8px 16px;border-radius:25px;background:var(--card);border:1px solid var(--border);
+    font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+  }
+  .mcat:hover { color:white;border-color:rgba(255,255,255,.2); }
+  .mcat.active { background:rgba(255,77,45,.15);border-color:var(--fire);color:white; }
+
+  .menu-section-title { font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:16px;margin-top:8px; }
+
+  .menu-item-row {
+    display:flex;align-items:center;gap:14px;padding:14px 16px;
+    background:var(--card);border:1px solid var(--border);border-radius:14px;
+    margin-bottom:10px;transition:all .2s;
+  }
+  .menu-item-row:hover { border-color:rgba(255,77,45,.2); }
+  .mi-icon { font-size:24px;flex-shrink:0; }
+  .mi-info { flex:1; }
+  .mi-name { font-size:15px;font-weight:600;margin-bottom:2px; }
+  .mi-desc { font-size:12px;color:var(--muted); }
+  .mi-price { font-size:16px;font-weight:700;color:var(--gold);margin-right:12px;white-space:nowrap; }
+  .mi-add {
+    width:36px;height:36px;border-radius:50%;
+    background:rgba(255,77,45,.1);border:1px solid rgba(255,77,45,.3);
+    color:var(--fire);font-size:20px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .2s;flex-shrink:0;font-family:'DM Sans',sans-serif;
+  }
+  .mi-add:hover { background:var(--fire);color:white;border-color:var(--fire); }
+  .mi-add.flash { background:#27ae60;border-color:#27ae60;color:white; }
+
+  /* RIGHT */
+  .right {
+    display:flex;flex-direction:column;padding:40px 36px;
+    position:sticky;top:66px;height:calc(100vh - 66px);overflow-y:auto;
+  }
+  .right-title { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:24px; }
+
+  .cart-empty { text-align:center;color:var(--muted);padding:40px 20px;font-size:14px;line-height:1.8; }
+  .cart-empty .ce-icon { font-size:44px;margin-bottom:12px; }
+
+  .cart-item {
+    display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);
+    animation:slideIn .25s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)} }
+  .ci-icon { font-size:22px; }
+  .ci-info { flex:1;min-width:0; }
+  .ci-name { font-size:14px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .ci-meta { font-size:12px;color:var(--muted); }
+  .ci-controls { display:flex;align-items:center;gap:5px; }
+  .ci-btn {
+    width:26px;height:26px;border-radius:50%;background:var(--card2);border:1px solid var(--border);
+    color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all .15s;font-family:'DM Sans',sans-serif;
+  }
+  .ci-btn:hover { border-color:var(--fire);color:var(--fire); }
+  .ci-qty { width:22px;text-align:center;font-size:14px;font-weight:600; }
+  .ci-price { font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap; }
+
+  .subtotal-block { padding:16px 0 0;margin-top:4px; }
+  .sub-row { display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:8px; }
+  .sub-row.total { font-size:15px;color:white;font-weight:600;padding-top:12px;border-top:1px solid var(--border);margin-top:4px; }
+  .sub-row.total .total-num { font-family:'Playfair Display',serif;font-size:30px;color:var(--fire);font-weight:900; }
+
+  .spacer { flex:1;min-height:24px; }
+
+  .checkout-btn {
+    width:100%;padding:17px;background:var(--fire);color:white;border:none;border-radius:40px;
+    font-size:16px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s;
+    margin-bottom:12px;margin-top:20px;font-family:'DM Sans',sans-serif;
+  }
+  .checkout-btn:hover { transform:translateY(-2px);box-shadow:0 12px 36px rgba(255,77,45,.45); }
+  .checkout-btn:disabled { opacity:.4;cursor:default;transform:none;box-shadow:none; }
+
+  .clear-btn {
+    width:100%;padding:10px;background:transparent;color:var(--muted);
+    border:1px solid var(--border);border-radius:30px;font-size:13px;cursor:pointer;
+    transition:all .2s;font-family:'DM Sans',sans-serif;margin-bottom:14px;
+  }
+  .clear-btn:hover { color:white;border-color:rgba(255,255,255,.2); }
+  .trust-line { text-align:center;font-size:12px;color:var(--muted); }
+
+  /* PAYMENT MODAL */
+  .pay-overlay {
+    position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);
+    display:flex;align-items:center;justify-content:center;z-index:500;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .pay-overlay.show { opacity:1;pointer-events:all; }
+  .pay-box {
+    background:var(--card);border:1px solid var(--border);border-radius:28px;
+    padding:44px 40px;max-width:460px;width:92%;
+    transform:scale(.92);transition:transform .3s;
+  }
+  .pay-overlay.show .pay-box { transform:scale(1); }
+  .pay-title { font-family:'Playfair Display',serif;font-size:26px;font-weight:900;margin-bottom:6px; }
+  .pay-sub { font-size:13px;color:var(--muted);margin-bottom:28px; }
+  .pay-methods {
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;
+  }
+  .pay-method {
+    background:var(--card2);border:1px solid var(--border);border-radius:12px;
+    padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .pay-method:hover { border-color:rgba(255,255,255,.2); }
+  .pay-method.active { background:rgba(255,77,45,.12);border-color:var(--fire); }
+  .pay-method-icon { font-size:22px;margin-bottom:4px; }
+  .pay-method-label { font-size:11px;color:var(--muted); }
+  .pay-method.active .pay-method-label { color:white; }
+  .pay-fields { display:flex;flex-direction:column;gap:12px;margin-bottom:24px; }
+  .pay-field-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+  .pay-input-wrap { display:flex;flex-direction:column;gap:5px; }
+  .pay-label { font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500; }
+  .pay-input {
+    background:#0f0f0f;border:1px solid var(--border);border-radius:10px;
+    padding:12px 14px;color:white;font-size:15px;font-family:'DM Sans',sans-serif;
+    transition:border-color .2s;outline:none;width:100%;
+  }
+  .pay-input:focus { border-color:rgba(255,77,45,.5); }
+  .pay-input::placeholder { color:rgba(255,255,255,.2); }
+  .pay-total-row {
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 0;border-top:1px solid var(--border);margin-bottom:16px;
+  }
+  .pay-total-label { font-size:14px;color:var(--muted); }
+  .pay-total-num { font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--fire); }
+  .pay-btn {
+    width:100%;padding:16px;background:var(--fire);color:white;border:none;border-radius:40px;
+    font-size:15px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s;
+    font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .pay-btn:hover { transform:translateY(-2px);box-shadow:0 10px 32px rgba(255,77,45,.45); }
+  .pay-btn:disabled { opacity:.5;cursor:default;transform:none;box-shadow:none; }
+  .pay-secure { text-align:center;font-size:12px;color:var(--muted);margin-top:12px; }
+  .processing-spinner {
+    width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
+    border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* RECEIPT */
+  .receipt-overlay {
+    position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);
+    display:flex;align-items:center;justify-content:center;z-index:500;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .receipt-overlay.show { opacity:1;pointer-events:all; }
+  .receipt-box {
+    background:var(--card);border:1px solid var(--border);border-radius:28px;
+    padding:48px 44px;max-width:420px;width:90%;text-align:center;
+    transform:scale(.92);transition:transform .3s;
+  }
+  .receipt-overlay.show .receipt-box { transform:scale(1); }
+  .re-icon { font-size:56px;margin-bottom:16px; }
+  .re-title { font-family:'Playfair Display',serif;font-size:28px;font-weight:900;margin-bottom:10px; }
+  .re-sub { color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:24px; }
+  .re-id { font-family:monospace;font-size:13px;letter-spacing:2px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 20px;margin-bottom:10px; }
+  .re-items { background:rgba(255,255,255,.03);border-radius:10px;padding:14px 18px;margin-bottom:24px;text-align:left;font-size:13px;color:var(--muted);line-height:1.9; }
+  .re-close { padding:14px 40px;border-radius:30px;background:var(--fire);color:white;border:none;cursor:pointer;font-size:15px;font-family:'DM Sans',sans-serif;transition:opacity .2s; }
+  .re-close:hover { opacity:.85; }
+
+  @media(max-width:960px){
+    .page{grid-template-columns:1fr}
+    .right{position:static;height:auto;border-top:1px solid var(--border)}
+    .left{border-right:none}
+    nav{padding:16px 20px}
+    nav ul{display:none}
+    .panel{padding:28px 22px}
+    .topping-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🍕 Joe's</a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="menu.html">Menu</a></li>
+    <li><a href="order.html" class="active">Order</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <div class="left">
+    <div class="mode-tabs">
+      <div class="mode-tab active" data-panel="builder">🍕 Build a Pizza</div>
+      <div class="mode-tab" data-panel="menu">📋 Full Menu</div>
+    </div>
+
+    <!-- BUILDER -->
+    <div class="panel active" id="panel-builder">
+      <div class="panel-label">Custom Builder</div>
+      <h1 class="panel-title">Craft Your Pizza</h1>
+      <div class="pizza-preview">
+        <canvas id="pizzaCanvas" width="300" height="300"></canvas>
+        <div class="spin-hint">⟳ Updates live as you build</div>
+      </div>
+      <div class="build-section">
+        <div class="build-head">Choose Base</div>
+        <div class="pill-group" id="pizzaGroup">
+          <div class="pill active" data-val="14.99" data-name="Joe Mama">Joe Mama <span class="pt">$14.99</span></div>
+          <div class="pill" data-val="13.99" data-name="You.">You. <span class="pt">$13.99</span></div>
+          <div class="pill" data-val="12.99" data-name="Margherita">Margherita <span class="pt">$12.99</span></div>
+          <div class="pill" data-val="15.99" data-name="Meat Lover's">Meat Lover's <span class="pt">$15.99</span></div>
+          <div class="pill" data-val="12.49" data-name="Hawaiian">Hawaiian <span class="pt">$12.49</span></div>
+          <div class="pill" data-val="13.49" data-name="Veggie Supreme">Veggie Supreme <span class="pt">$13.49</span></div>
+          <div class="pill" data-val="14.49" data-name="BBQ Chicken">BBQ Chicken <span class="pt">$14.49</span></div>
+          <div class="pill" data-val="15.99" data-name="Supreme Combo">Supreme Combo <span class="pt">$15.99</span></div>
+        </div>
+      </div>
+      <div class="build-section">
+        <div class="build-head">Size</div>
+        <div class="size-group">
+          <div class="size-card" data-val="0" data-size="Medium"><div class="sz-icon">🍕</div><div class="sz-label">Medium</div><div class="sz-price">10"</div></div>
+          <div class="size-card active" data-val="2" data-size="Large"><div class="sz-icon">🍕</div><div class="sz-label">Large</div><div class="sz-price">12" · +$2</div></div>
+          <div class="size-card" data-val="4" data-size="XL"><div class="sz-icon">🍕</div><div class="sz-label">XL</div><div class="sz-price">14" · +$4</div></div>
+        </div>
+      </div>
+      <div class="build-section">
+        <div class="build-head">Extra Toppings · $1.50 each</div>
+        <div class="topping-grid">
+          <div class="topping-tile" data-key="cheese"><span class="t-icon">🧀</span><span class="t-name">Extra Cheese</span><span class="t-add">+</span></div>
+          <div class="topping-tile" data-key="mushroom"><span class="t-icon">🍄</span><span class="t-name">Mushrooms</span><span class="t-add">+</span></div>
+          <div class="topping-tile" data-key="jalapeno"><span class="t-icon">🌶️</span><span class="t-name">Jalapeños</span><span class="t-add">+</span></div>
+          <div class="topping-tile" data-key="bacon"><span class="t-icon">🥓</span><span class="t-name">Bacon</span><span class="t-add">+</span></div>
+          <div class="topping-tile" data-key="olive"><span class="t-icon">🫒</span><span class="t-name">Olives</span><span class="t-add">+</span></div>
+          <div class="topping-tile" data-key="pepper"><span class="t-icon">🫑</span><span class="t-name">Peppers</span><span class="t-add">+</span></div>
+        </div>
+      </div>
+      <div class="build-section">
+        <div class="build-head">Quantity</div>
+        <div class="qty-control">
+          <button class="qty-btn" id="qtyDown">−</button>
+          <div class="qty-num" id="qtyNum">1</div>
+          <button class="qty-btn" id="qtyUp">+</button>
+        </div>
+      </div>
+      <button class="add-pizza-btn" id="addPizzaBtn">Add Pizza to Order →</button>
+    </div>
+
+    <!-- MENU -->
+    <div class="panel" id="panel-menu">
+      <div class="panel-label">Browse</div>
+      <h1 class="panel-title">Full Menu</h1>
+      <div class="menu-cats">
+        <button class="mcat active" data-cat="all">All</button>
+        <button class="mcat" data-cat="sides">Sides & Breads</button>
+        <button class="mcat" data-cat="sandwiches">Sandwiches</button>
+        <button class="mcat" data-cat="drinks">Drinks</button>
+        <button class="mcat" data-cat="icecream">Ice Cream</button>
+      </div>
+      <div id="menuItemsContainer"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="right-title">Your Order</div>
+    <div id="cartContent"><div class="cart-empty"><div class="ce-icon">🍕</div><div>Your order is empty.<br>Build a pizza or browse the full menu.</div></div></div>
+    <div class="subtotal-block" id="subtotalBlock" style="display:none">
+      <div class="sub-row"><span>Subtotal</span><span id="subAmt">$0.00</span></div>
+      <div class="sub-row"><span>Delivery</span><span>Free</span></div>
+      <div class="sub-row total"><span>Total</span><span class="total-num" id="totalAmt">$0.00</span></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="checkout-btn" id="checkoutBtn" disabled>Proceed to Payment →</button>
+    <button class="clear-btn" id="clearBtn">Clear order</button>
+    <div class="trust-line">🔒 Secure · Free delivery over $25</div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="pay-overlay" id="payOverlay">
+  <div class="pay-box">
+    <div class="pay-title">Payment</div>
+    <div class="pay-sub">We accept literally any form of payment. Yes, really.</div>
+
+    <div class="pay-methods">
+      <div class="pay-method active" data-method="card">
+        <div class="pay-method-icon">💳</div>
+        <div class="pay-method-label">Card</div>
+      </div>
+      <div class="pay-method" data-method="paypal">
+        <div class="pay-method-icon">🅿️</div>
+        <div class="pay-method-label">PayPal</div>
+      </div>
+      <div class="pay-method" data-method="crypto">
+        <div class="pay-method-icon">₿</div>
+        <div class="pay-method-label">Crypto</div>
+      </div>
+      <div class="pay-method" data-method="vibe">
+        <div class="pay-method-icon">✨</div>
+        <div class="pay-method-label">Vibes</div>
+      </div>
+    </div>
+
+    <div class="pay-fields" id="payFields">
+      <!-- fields injected by JS based on method -->
+    </div>
+
+    <div class="pay-total-row">
+      <div class="pay-total-label">Charging today</div>
+      <div class="pay-total-num" id="payTotal">$0.00</div>
+    </div>
+
+    <button class="pay-btn" id="payBtn">🔒 Pay Now</button>
+    <div class="pay-secure">256-bit encryption · PCI compliant · We totally know what that means</div>
+  </div>
+</div>
+
+<!-- Receipt -->
+<div class="receipt-overlay" id="receiptOverlay">
+  <div class="receipt-box">
+    <div class="re-icon">🍕</div>
+    <div class="re-title">Order Placed!</div>
+    <div class="re-sub">Payment accepted. Your pizza is in the oven.</div>
+    <div class="re-id" id="reId">ORDER #------</div>
+    <div class="re-items" id="reItems"></div>
+    <div style="background:rgba(255,77,45,0.08);border:1px solid rgba(255,77,45,0.2);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;line-height:2;color:var(--muted)">
+      <div id="reLocation">📍 Locating you...</div>
+      <div id="reEta">🕐 Calculating ETA...</div>
+      <div id="reCharged">💳 Processing payment...</div>
+    </div>
+    <button class="re-close" id="reClose">Back to Home</button>
+  </div>
+</div>
+
+<script>
+// ── Menu Data ──
+const MENU_DATA = {
+  sides:[
+    {id:'s1',name:'Garlic Bread',price:5.99,icon:'🥖',desc:'Toasted with garlic butter',cat:'sides'},
+    {id:'s2',name:'Cheesy Bread',price:6.49,icon:'🧀',desc:'Loaded with melted cheese',cat:'sides'},
+    {id:'s3',name:'Naan Bread',price:4.99,icon:'🫓',desc:'Soft & fluffy naan',cat:'sides'},
+    {id:'s4',name:'Mozzarella Sticks',price:7.49,icon:'🧆',desc:'Crispy, gooey mozzarella',cat:'sides'},
+    {id:'s5',name:'Marinara Sauce',price:1.00,icon:'🍅',desc:'Dipping sauce',cat:'sides'},
+    {id:'s6',name:'Ranch Sauce',price:1.00,icon:'🥛',desc:'Dipping sauce',cat:'sides'},
+    {id:'s7',name:'Garlic Sauce',price:1.00,icon:'🧄',desc:'Dipping sauce',cat:'sides'},
+    {id:'s8',name:'BBQ Sauce',price:1.00,icon:'🍯',desc:'Dipping sauce',cat:'sides'},
+  ],
+  sandwiches:[
+    {id:'w1',name:'Italian Sub',price:8.99,icon:'🥪',desc:'Classic Italian meats & veggies',cat:'sandwiches'},
+    {id:'w2',name:'Chicken Parmesan',price:9.49,icon:'🍗',desc:'Crispy chicken, marinara & parm',cat:'sandwiches'},
+    {id:'w3',name:'Meatball Sub',price:8.79,icon:'🫓',desc:'Hearty meatballs in marinara',cat:'sandwiches'},
+    {id:'w4',name:'Turkey & Swiss',price:8.99,icon:'🦃',desc:'Sliced turkey with Swiss cheese',cat:'sandwiches'},
+  ],
+  drinks:[
+    {id:'d1',name:'Pepsi',price:2.49,icon:'🥤',desc:'Ice cold',cat:'drinks'},
+    {id:'d2',name:'Diet Pepsi',price:2.49,icon:'🥤',desc:'Ice cold',cat:'drinks'},
+    {id:'d3',name:'Mountain Dew',price:2.49,icon:'🥤',desc:'Ice cold',cat:'drinks'},
+    {id:'d4',name:'Iced Tea',price:2.29,icon:'🧋',desc:'Freshly brewed',cat:'drinks'},
+    {id:'d5',name:'Lemonade',price:2.29,icon:'🍋',desc:'Freshly squeezed',cat:'drinks'},
+    {id:'d6',name:'Bottled Water',price:1.99,icon:'💧',desc:'Still water',cat:'drinks'},
+    {id:'d7',name:'Orange Juice',price:2.49,icon:'🍊',desc:'Freshly squeezed',cat:'drinks'},
+    {id:'d8',name:'Iced Coffee',price:2.99,icon:'☕',desc:'Cold brew',cat:'drinks'},
+  ],
+  icecream:[
+    {id:'i1',name:'Chocolate',price:3.99,icon:'🍫',desc:'Rich & creamy',cat:'icecream'},
+    {id:'i2',name:'Vanilla',price:3.99,icon:'🍦',desc:'Classic smooth',cat:'icecream'},
+    {id:'i3',name:'Strawberry',price:3.99,icon:'🍓',desc:'Fresh & fruity',cat:'icecream'},
+    {id:'i4',name:"Cookies & Cream",price:4.49,icon:'🍪',desc:'Oreo chunks',cat:'icecream'},
+    {id:'i5',name:'Mint Choc Chip',price:4.49,icon:'🌿',desc:'Cool & minty',cat:'icecream'},
+    {id:'i6',name:'Rocky Road',price:4.49,icon:'🥜',desc:'Nuts & marshmallow',cat:'icecream'},
+    {id:'i7',name:'Salted Caramel',price:4.49,icon:'🧂',desc:'Sweet & salty',cat:'icecream'},
+    {id:'i8',name:'Cookie Dough',price:4.49,icon:'🍪',desc:'Chunks of dough',cat:'icecream'},
+    {id:'i9',name:'Triple Berry',price:4.49,icon:'🫐',desc:'Mixed berry swirl',cat:'icecream'},
+  ],
+};
+const ALL_ITEMS = Object.values(MENU_DATA).flat();
+
+// ── Cart ──
+let cart = [];
+function addToCart(item){
+  const ex=cart.find(c=>c.id===item.id&&c.label===item.label);
+  if(ex)ex.qty++;else cart.push({...item,qty:1});
+  renderCart();
+}
+function changeQty(id,label,delta){
+  const idx=cart.findIndex(c=>c.id===id&&c.label===label);
+  if(idx===-1)return;
+  cart[idx].qty+=delta;
+  if(cart[idx].qty<=0)cart.splice(idx,1);
+  renderCart();
+}
+function renderCart(){
+  const cont=document.getElementById('cartContent');
+  const sub=document.getElementById('subtotalBlock');
+  const btn=document.getElementById('checkoutBtn');
+  if(cart.length===0){
+    cont.innerHTML='<div class="cart-empty"><div class="ce-icon">🍕</div><div>Your order is empty.<br>Build a pizza or browse the full menu.</div></div>';
+    sub.style.display='none';btn.disabled=true;return;
+  }
+  cont.innerHTML=cart.map(item=>`
+    <div class="cart-item">
+      <div class="ci-icon">${item.icon||'🍕'}</div>
+      <div class="ci-info">
+        <div class="ci-name" title="${item.label||item.name}">${item.label||item.name}</div>
+        <div class="ci-meta">$${item.price.toFixed(2)} each</div>
+      </div>
+      <div class="ci-controls">
+        <button class="ci-btn" onclick="changeQty('${item.id}','${(item.label||'').replace(/'/g,"\\'")}', -1)">−</button>
+        <div class="ci-qty">${item.qty}</div>
+        <button class="ci-btn" onclick="changeQty('${item.id}','${(item.label||'').replace(/'/g,"\\'")}', 1)">+</button>
+      </div>
+      <div class="ci-price">$${(item.price*item.qty).toFixed(2)}</div>
+    </div>`).join('');
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById('subAmt').textContent='$'+total.toFixed(2);
+  document.getElementById('totalAmt').textContent='$'+total.toFixed(2);
+  sub.style.display='block';btn.disabled=false;
+}
+
+// ── Pizza Canvas ──
+const canvas=document.getElementById('pizzaCanvas');
+const ctx=canvas.getContext('2d');
+const CX=150,CY=150;
+let angle=0;
+const bState={price:14.99,name:'Joe Mama',size:2,sizeName:'Large',toppings:new Set(),qty:1};
+
+const tDraw={
+  cheese:(c,cx,cy)=>{[[cx+30,cy-20],[cx-38,cy+15],[cx+42,cy+35],[cx-15,cy-42]].forEach(([bx,by])=>{const g=c.createRadialGradient(bx,by,2,bx,by,20);g.addColorStop(0,'rgba(255,230,90,0.9)');g.addColorStop(1,'rgba(255,200,50,0)');c.beginPath();c.arc(bx,by,20,0,Math.PI*2);c.fillStyle=g;c.fill();});},
+  mushroom:(c,cx,cy)=>{[[cx+30,cy+18],[cx-35,cy-15],[cx+8,cy-42],[cx-14,cy+45]].forEach(([mx,my])=>{c.beginPath();c.arc(mx,my,10,Math.PI,0);c.fillStyle='#a0522d';c.fill();c.fillStyle='#d2a679';c.fillRect(mx-3,my,6,8);});},
+  jalapeno:(c,cx,cy)=>{[[cx+28,cy-32],[cx-42,cy+27],[cx+50,cy+12],[cx-12,cy+50]].forEach(([jx,jy],i)=>{c.save();c.translate(jx,jy);c.rotate(i*0.5);c.beginPath();c.moveTo(0,-12);c.quadraticCurveTo(9,0,0,12);c.quadraticCurveTo(-9,0,0,-12);c.fillStyle='#2e7d32';c.fill();c.restore();});},
+  bacon:(c,cx,cy)=>{[[cx+24,cy-36],[cx-42,cy-8],[cx+42,cy+32],[cx-15,cy+44]].forEach(([bx,by])=>{c.save();c.translate(bx,by);c.rotate(0.3);c.beginPath();c.roundRect(-18,-4,36,8,2);c.fillStyle='#8b1a1a';c.fill();c.beginPath();c.roundRect(-18,-1,36,3,1);c.fillStyle='#f5c6a0';c.fill();c.restore();});},
+  olive:(c,cx,cy)=>{[[cx+36,cy-28],[cx-48,cy+8],[cx+8,cy+50],[cx-24,cy-48]].forEach(([ox,oy])=>{c.beginPath();c.ellipse(ox,oy,10,7,0.3,0,Math.PI*2);c.fillStyle='#2d4a1e';c.fill();c.beginPath();c.ellipse(ox,oy,4,3,0.3,0,Math.PI*2);c.fillStyle='#e84b1e';c.fill();});},
+  pepper:(c,cx,cy)=>{const cols=['#c0392b','#f39c12','#27ae60'];[[cx+40,cy-16],[cx-40,cy+32],[cx+16,cy+48],[cx-24,cy-44]].forEach(([px,py],i)=>{c.save();c.translate(px,py);c.rotate(i*0.5);c.beginPath();c.moveTo(0,-12);c.bezierCurveTo(9,-4,12,4,0,14);c.bezierCurveTo(-12,4,-9,-4,0,-12);c.fillStyle=cols[i%3];c.fill();c.restore();});},
+};
+
+function drawPizza(a){
+  ctx.clearRect(0,0,300,300);
+  const sc=bState.size===0?0.82:bState.size===2?1.0:1.1;
+  const R=Math.round(118*Math.min(sc,1));
+  const cx=CX,cy=CY;
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(a);ctx.translate(-cx,-cy);
+  ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=25;ctx.shadowOffsetY=6;
+  const cg=ctx.createRadialGradient(cx,cy,R*.7,cx,cy,R);cg.addColorStop(0,'#c97b2a');cg.addColorStop(.6,'#b5651d');cg.addColorStop(1,'#8b4513');
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
+  ctx.shadowColor='transparent';
+  for(let a2=0;a2<Math.PI*2;a2+=.32){const bx=cx+(R-8)*Math.cos(a2),by=cy+(R-8)*Math.sin(a2);ctx.beginPath();ctx.arc(bx,by,6,0,Math.PI*2);ctx.fillStyle='rgba(155,85,20,0.4)';ctx.fill();}
+  for(let a2=.2;a2<Math.PI*2;a2+=.65){const bx=cx+(R-4)*Math.cos(a2),by=cy+(R-4)*Math.sin(a2);ctx.beginPath();ctx.arc(bx,by,3,0,Math.PI*2);ctx.fillStyle='rgba(55,20,4,0.4)';ctx.fill();}
+  const sg=ctx.createRadialGradient(cx-16,cy-16,8,cx,cy,R*.76);sg.addColorStop(0,'#e84b1e');sg.addColorStop(1,'#a62e08');
+  ctx.beginPath();ctx.arc(cx,cy,R*.76,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
+  const chg=ctx.createRadialGradient(cx,cy,0,cx,cy,R*.72);chg.addColorStop(0,'#f5c842');chg.addColorStop(.5,'#edab20');chg.addColorStop(1,'rgba(225,150,15,0)');
+  ctx.beginPath();ctx.arc(cx,cy,R*.72,0,Math.PI*2);ctx.fillStyle=chg;ctx.fill();
+  [[cx+36,cy-24],[cx-42,cy+16],[cx+10,cy+48],[cx-28,cy-42],[cx+56,cy+36],[cx-52,cy-12],[cx+16,cy-62],[cx-36,cy+56]].forEach(([bx,by])=>{const g=ctx.createRadialGradient(bx,by,2,bx,by,22);g.addColorStop(0,'rgba(255,215,70,0.8)');g.addColorStop(1,'rgba(255,190,40,0)');ctx.beginPath();ctx.arc(bx,by,22,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();});
+  [[cx+36,cy-36],[cx-42,cy+32],[cx+10,cy+56],[cx-32,cy-48],[cx+62,cy+36],[cx-56,cy-16],[cx+70,cy-20],[cx-16,cy+76]].forEach(([px,py])=>{ctx.beginPath();ctx.arc(px+2,py+2,12,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,0.3)';ctx.fill();const pg=ctx.createRadialGradient(px-2,py-2,1,px,py,12);pg.addColorStop(0,'#cc2b0a');pg.addColorStop(1,'#7a1500');ctx.beginPath();ctx.arc(px,py,12,0,Math.PI*2);ctx.fillStyle=pg;ctx.fill();ctx.beginPath();ctx.arc(px-3,py-3,3.5,0,Math.PI*2);ctx.fillStyle='rgba(255,90,60,0.3)';ctx.fill();});
+  bState.toppings.forEach(k=>{if(tDraw[k])tDraw[k](ctx,cx,cy);});
+  [[cx-18,cy-18,.4],[cx+42,cy+14,-.9],[cx-42,cy+42,1.3]].forEach(([lx,ly,rot])=>{ctx.save();ctx.translate(lx,ly);ctx.rotate(rot);const lg=ctx.createLinearGradient(-8,0,8,0);lg.addColorStop(0,'#1a5c1a');lg.addColorStop(.5,'#2d8c2d');lg.addColorStop(1,'#1a5c1a');ctx.beginPath();ctx.ellipse(0,0,10,6,0,0,Math.PI*2);ctx.fillStyle=lg;ctx.fill();ctx.restore();});
+  const gl=ctx.createRadialGradient(cx-40,cy-40,4,cx-24,cy-24,80);gl.addColorStop(0,'rgba(255,255,255,0.13)');gl.addColorStop(1,'rgba(255,255,255,0)');ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=gl;ctx.fill();
+  ctx.restore();
+}
+(function spin(){angle+=.002;drawPizza(angle);requestAnimationFrame(spin)})();
+
+// ── Builder controls ──
+document.querySelectorAll('#pizzaGroup .pill').forEach(p=>{p.addEventListener('click',()=>{document.querySelectorAll('#pizzaGroup .pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');bState.price=parseFloat(p.dataset.val);bState.name=p.dataset.name;});});
+document.querySelectorAll('.size-card').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.size-card').forEach(x=>x.classList.remove('active'));c.classList.add('active');bState.size=parseFloat(c.dataset.val);bState.sizeName=c.dataset.size;});});
+document.querySelectorAll('.topping-tile').forEach(tile=>{tile.addEventListener('click',()=>{const k=tile.dataset.key;if(bState.toppings.has(k)){bState.toppings.delete(k);tile.classList.remove('active');tile.querySelector('.t-add').textContent='+';}else{bState.toppings.add(k);tile.classList.add('active');tile.querySelector('.t-add').textContent='✓';}});});
+let bQty=1;
+document.getElementById('qtyDown').addEventListener('click',()=>{if(bQty>1){bQty--;document.getElementById('qtyNum').textContent=bQty;bState.qty=bQty;}});
+document.getElementById('qtyUp').addEventListener('click',()=>{bQty++;document.getElementById('qtyNum').textContent=bQty;bState.qty=bQty;});
+document.getElementById('addPizzaBtn').addEventListener('click',()=>{
+  const tNames=[...bState.toppings].map(k=>({cheese:'Cheese',mushroom:'Mushrooms',jalapeno:'Jalapeños',bacon:'Bacon',olive:'Olives',pepper:'Peppers'}[k])).filter(Boolean);
+  const price=bState.price+bState.size+bState.toppings.size*1.5;
+  const label=`${bState.name} (${bState.sizeName})${tNames.length?' + '+tNames.join(', '):''}`;
+  const id='pizza_'+Date.now();
+  for(let i=0;i<bState.qty;i++) addToCart({id,name:bState.name,label,price,icon:'🍕',qty:0});
+});
+
+// ── Mode tabs ──
+document.querySelectorAll('.mode-tab').forEach(tab=>{tab.addEventListener('click',()=>{document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));tab.classList.add('active');document.getElementById('panel-'+tab.dataset.panel).classList.add('active');});});
+
+// ── Menu panel ──
+let activeCat='all';
+function renderMenuPanel(){
+  const cont=document.getElementById('menuItemsContainer');
+  const cats=['sides','sandwiches','drinks','icecream'];
+  const labels={sides:'Sides & Breads',sandwiches:'Sandwiches',drinks:'Drinks',icecream:'Ice Cream'};
+  let html='';
+  (activeCat==='all'?cats:[activeCat]).forEach(cat=>{
+    html+=`<div class="menu-section-title">${labels[cat]}</div>`;
+    MENU_DATA[cat].forEach(item=>{
+      html+=`<div class="menu-item-row"><div class="mi-icon">${item.icon}</div><div class="mi-info"><div class="mi-name">${item.name}</div><div class="mi-desc">${item.desc}</div></div><div class="mi-price">$${item.price.toFixed(2)}</div><button class="mi-add" onclick="quickAdd(this,'${item.id}')">+</button></div>`;
+    });
+  });
+  cont.innerHTML=html;
+}
+function quickAdd(btn,id){
+  const item=ALL_ITEMS.find(i=>i.id===id);if(!item)return;
+  addToCart({...item,label:item.name});
+  btn.classList.add('flash');btn.textContent='✓';
+  setTimeout(()=>{btn.classList.remove('flash');btn.textContent='+';},1000);
+}
+document.querySelectorAll('.mcat').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.mcat').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeCat=btn.dataset.cat;renderMenuPanel();});});
+renderMenuPanel();
+
+// ── Payment Modal ──
+const payFields = {
+  card: `
+    <div class="pay-input-wrap">
+      <div class="pay-label">Cardholder Name</div>
+      <input class="pay-input" placeholder="Joe Mama" />
+    </div>
+    <div class="pay-input-wrap">
+      <div class="pay-label">Card Number</div>
+      <input class="pay-input" placeholder="1234 5678 9012 3456" maxlength="19" id="cardNum" />
+    </div>
+    <div class="pay-field-row">
+      <div class="pay-input-wrap">
+        <div class="pay-label">Expiry</div>
+        <input class="pay-input" placeholder="MM/YY" maxlength="5" />
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">CVV</div>
+        <input class="pay-input" placeholder="Any 3 digits" maxlength="4" />
+      </div>
+    </div>`,
+  paypal: `
+    <div class="pay-input-wrap">
+      <div class="pay-label">PayPal Email</div>
+      <input class="pay-input" placeholder="anything@whatever.com" />
+    </div>
+    <div class="pay-input-wrap">
+      <div class="pay-label">PayPal Password</div>
+      <input class="pay-input" type="password" placeholder="we definitely won't store this" />
+    </div>`,
+  crypto: `
+    <div class="pay-input-wrap">
+      <div class="pay-label">Wallet Address</div>
+      <input class="pay-input" placeholder="0x... or just smash the keyboard" />
+    </div>
+    <div class="pay-input-wrap">
+      <div class="pay-label">Coin Type</div>
+      <input class="pay-input" placeholder="Bitcoin, Dogecoin, PizzaCoin..." />
+    </div>`,
+  vibe: `
+    <div class="pay-input-wrap">
+      <div class="pay-label">Describe Your Vibe</div>
+      <input class="pay-input" placeholder="e.g. chill, chaotic, hungry" />
+    </div>
+    <div class="pay-input-wrap">
+      <div class="pay-label">Spirit Animal</div>
+      <input class="pay-input" placeholder="This is required for vibe verification" />
+    </div>`,
+};
+
+let activeMethod = 'card';
+
+function renderPayFields() {
+  document.getElementById('payFields').innerHTML = payFields[activeMethod];
+  // auto-format card number
+  const cn = document.getElementById('cardNum');
+  if (cn) cn.addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'').substring(0,16);
+    e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+  });
+}
+
+document.querySelectorAll('.pay-method').forEach(m => {
+  m.addEventListener('click', () => {
+    document.querySelectorAll('.pay-method').forEach(x => x.classList.remove('active'));
+    m.classList.add('active');
+    activeMethod = m.dataset.method;
+    renderPayFields();
+  });
+});
+
+document.getElementById('checkoutBtn').addEventListener('click', () => {
+  const total = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  document.getElementById('payTotal').textContent = '$' + total.toFixed(2);
+  renderPayFields();
+  document.getElementById('payOverlay').classList.add('show');
+});
+
+document.getElementById('payBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="processing-spinner"></div> Processing...';
+
+  // Fetch IP location
+  let locationLine = 'your location';
+  let ipLine = '';
+  let etaMin = 25 + Math.floor(Math.random() * 15);
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    const city = data.city || '';
+    const region = data.region || '';
+    const country = data.country_name || '';
+    const ip = data.ip || '';
+    if (city) locationLine = `${city}${region ? ', ' + region : ''}${country ? ', ' + country : ''}`;
+    if (ip) ipLine = ip;
+  } catch(e) { /* silently fail, use defaults */ }
+
+  // Fake processing delay
+  await new Promise(r => setTimeout(r, 1800));
+
+  document.getElementById('payOverlay').classList.remove('show');
+
+  const id = Math.floor(Math.random() * 900000) + 100000;
+  document.getElementById('reId').textContent = `ORDER #${id}`;
+  document.getElementById('reItems').innerHTML = cart.map(c =>
+    `${c.icon||'🍕'} ${c.label||c.name} × ${c.qty} — $${(c.price*c.qty).toFixed(2)}`
+  ).join('<br>');
+
+  // Build the troll delivery message
+  const total = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  document.getElementById('reLocation').innerHTML =
+    `📍 Delivering to: <strong style="color:white">${locationLine}</strong>` +
+    (ipLine ? `<br><span style="font-size:11px;opacity:0.5">IP: ${ipLine}</span>` : '');
+  document.getElementById('reEta').innerHTML =
+    `🕐 Estimated arrival: <strong style="color:white">${etaMin} minutes</strong>`;
+  document.getElementById('reCharged').innerHTML =
+    `💳 Payment accepted: <strong style="color:#f5a623">$${total.toFixed(2)}</strong> charged successfully`;
+
+  document.getElementById('receiptOverlay').classList.add('show');
+
+  btn.disabled = false;
+  btn.innerHTML = '🔒 Pay Now';
+});
+
+document.getElementById('clearBtn').addEventListener('click',()=>{cart=[];renderCart();});
+document.getElementById('reClose').addEventListener('click',()=>{
+  cart=[];renderCart();
+  document.getElementById('receiptOverlay').classList.remove('show');
+  window.location.href='index.html';
+});
+
+renderCart();
+</script>
+</body>
+</html>
