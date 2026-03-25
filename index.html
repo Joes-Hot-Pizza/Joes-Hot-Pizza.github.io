@@ -342,6 +342,36 @@
     .menu { padding: 80px 30px; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
+
+  .nav-pass {
+  background: linear-gradient(135deg, #f5a623, #ff4d2d);
+  color: #111 !important;
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nav-pass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav-pass:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255,77,45,0.35);
+}
+
+.nav-pass:hover::before {
+  opacity: 1;
+}
 </style>
 </head>
 <body>
