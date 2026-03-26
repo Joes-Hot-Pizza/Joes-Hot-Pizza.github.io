@@ -3,19 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<!-- Open Graph / Discord -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://joes-hot-pizza.github.io/">
-<meta property="og:title" content="🍕 Joe's Hot Pizza">
-<meta property="og:description" content="Craving pizza? Step into Joe's Hot Pizza and build your perfect order.">
-<meta property="og:image" content="https://raw.githubusercontent.com/Joes-Hot-Pizza/Joes-Hot-Pizza.github.io/main/embed.webp">
-<meta property="og:site_name" content="Joe's Hot Pizza">
-
-<!-- Forces large preview -->
-<meta name="twitter:card" content="summary_large_image">
-
-<!-- Embed color -->
-<meta name="theme-color" content="#ff4d2d">
 <title>Joe's Hot Pizza</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -67,6 +54,13 @@
     font-weight: 500 !important;
   }
   .nav-cta:hover { opacity: 0.9; }
+
+  .nav-pass {
+    background: linear-gradient(135deg, #f5a623, #ff4d2d);
+    color: #111 !important; font-weight: 600 !important;
+    padding: 10px 22px; border-radius: 30px;
+  }
+  .nav-pass:hover { opacity: 0.88; }
 
   /* HERO */
   .hero {
@@ -342,51 +336,17 @@
     .menu { padding: 80px 30px; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
-
-  .nav-pass {
-  background: linear-gradient(135deg, #f5a623, #ff4d2d);
-  color: #111 !important;
-  padding: 10px 22px;
-  border-radius: 30px;
-  font-weight: 600 !important;
-  letter-spacing: 0.5px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.nav-pass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.nav-pass:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(255,77,45,0.35);
-}
-
-.nav-pass:hover::before {
-  opacity: 1;
-}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">🍕 Joe's Hot Pizza</div>
+  <div class="nav-logo">🍕 Joe's</div>
   <ul>
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="menu.html">Menu</a></li>
-
-    <!-- Normal button -->
     <li><a href="order.html" class="nav-cta">Order Now</a></li>
-
-    <!-- FIXED Joe Pass button -->
-    <li><a href="joepass.html" class="nav-pass">🔥 Joe Pass</a></li>
+    <li><a href="joepass.html" class="nav-pass">Joe-Pass ✦</a></li>
   </ul>
 </nav>
 
@@ -397,7 +357,7 @@
     <p class="hero-sub">Handcrafted dough, premium toppings, and that perfect char. Every pizza is made to order and delivered piping hot to your door.</p>
     <div class="hero-btns">
       <a href="order.html" class="btn-primary">Build Your Pizza →</a>
-      <a href="menu.html" class="btn-ghost">See Menu</a>
+      <a href="#menu" class="btn-ghost">See Menu</a>
     </div>
   </div>
 
