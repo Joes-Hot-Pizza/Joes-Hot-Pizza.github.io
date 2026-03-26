@@ -235,25 +235,39 @@
   .pay-overlay.show { opacity:1;pointer-events:all; }
   .pay-box {
     background:var(--card);border:1px solid var(--border);border-radius:28px;
-    padding:44px 40px;max-width:460px;width:92%;
+    padding:0;max-width:480px;width:92%;overflow:hidden;
     transform:scale(.92);transition:transform .3s;
   }
   .pay-overlay.show .pay-box { transform:scale(1); }
-  .pay-title { font-family:'Playfair Display',serif;font-size:26px;font-weight:900;margin-bottom:6px; }
-  .pay-sub { font-size:13px;color:var(--muted);margin-bottom:28px; }
-  .pay-methods {
-    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;
+
+  /* Tabs */
+  .pay-tabs {
+    display:flex;border-bottom:1px solid var(--border);
+    background:#141414;
   }
-  .pay-method {
-    background:var(--card2);border:1px solid var(--border);border-radius:12px;
-    padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s;
+  .pay-tab {
+    flex:1;padding:14px 8px;text-align:center;cursor:pointer;
+    font-size:12px;font-weight:600;color:var(--muted);
+    border-bottom:2px solid transparent;transition:all .2s;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
   }
-  .pay-method:hover { border-color:rgba(255,255,255,.2); }
-  .pay-method.active { background:rgba(255,77,45,.12);border-color:var(--fire); }
-  .pay-method-icon { font-size:22px;margin-bottom:4px; }
-  .pay-method-label { font-size:11px;color:var(--muted); }
-  .pay-method.active .pay-method-label { color:white; }
-  .pay-fields { display:flex;flex-direction:column;gap:12px;margin-bottom:24px; }
+  .pay-tab:hover { color:white; }
+  .pay-tab.active { color:white;border-bottom-color:var(--fire); }
+  .pay-tab-icon { font-size:18px; }
+
+  /* Joe-Pass tab special styling */
+  .pay-tab.joepass-tab { color:rgba(245,166,35,0.6); }
+  .pay-tab.joepass-tab:hover { color:var(--gold); }
+  .pay-tab.joepass-tab.active {
+    color:var(--gold);
+    border-bottom-color:var(--gold);
+    background:rgba(245,166,35,0.05);
+  }
+
+  .pay-body { padding:32px 36px 36px; }
+  .pay-title { font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:4px; }
+  .pay-sub { font-size:13px;color:var(--muted);margin-bottom:24px; }
+  .pay-fields { display:flex;flex-direction:column;gap:12px;margin-bottom:20px; }
   .pay-field-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
   .pay-input-wrap { display:flex;flex-direction:column;gap:5px; }
   .pay-label { font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500; }
@@ -264,12 +278,18 @@
   }
   .pay-input:focus { border-color:rgba(255,77,45,.5); }
   .pay-input::placeholder { color:rgba(255,255,255,.2); }
+
+  /* Joe-Pass input focus gold */
+  .joepass-active .pay-input:focus { border-color:rgba(245,166,35,.6); }
+
   .pay-total-row {
     display:flex;justify-content:space-between;align-items:center;
     padding:14px 0;border-top:1px solid var(--border);margin-bottom:16px;
   }
   .pay-total-label { font-size:14px;color:var(--muted); }
   .pay-total-num { font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--fire); }
+  .pay-total-num.free { color:var(--gold); }
+
   .pay-btn {
     width:100%;padding:16px;background:var(--fire);color:white;border:none;border-radius:40px;
     font-size:15px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s;
@@ -277,12 +297,50 @@
   }
   .pay-btn:hover { transform:translateY(-2px);box-shadow:0 10px 32px rgba(255,77,45,.45); }
   .pay-btn:disabled { opacity:.5;cursor:default;transform:none;box-shadow:none; }
+  .pay-btn.gold-btn {
+    background:linear-gradient(135deg,#f5a623,#e8901a);color:#111;
+  }
+  .pay-btn.gold-btn:hover { box-shadow:0 10px 32px rgba(245,166,35,.45); }
   .pay-secure { text-align:center;font-size:12px;color:var(--muted);margin-top:12px; }
   .processing-spinner {
     width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
     border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;
   }
   @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* Joe-Pass panel */
+  .joepass-panel {
+    text-align:center;padding:8px 0 4px;
+  }
+  .joepass-badge {
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);
+    border-radius:30px;padding:6px 16px;
+    font-size:12px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:20px;
+  }
+  .joepass-panel h3 {
+    font-family:'Playfair Display',serif;
+    font-size:22px;font-weight:900;margin-bottom:8px;
+  }
+  .joepass-panel p { font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px; }
+  .pass-input-wrap { position:relative;margin-bottom:16px; }
+  .pass-input {
+    width:100%;background:#0f0f0f;
+    border:1px solid rgba(245,166,35,.3);border-radius:12px;
+    padding:14px 48px 14px 18px;
+    color:var(--gold);font-size:18px;font-weight:600;
+    letter-spacing:3px;font-family:monospace;
+    outline:none;transition:border-color .2s;text-align:center;
+  }
+  .pass-input:focus { border-color:rgba(245,166,35,.7); }
+  .pass-input::placeholder { color:rgba(245,166,35,.25);letter-spacing:2px;font-size:14px;font-weight:400; }
+  .pass-error { font-size:12px;color:#ff6b6b;margin-top:6px;min-height:16px;text-align:center; }
+  .pass-success-row {
+    display:flex;align-items:center;gap:10px;
+    background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.25);
+    border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#5dde8e;
+  }
 
   /* RECEIPT */
   .receipt-overlay {
@@ -438,39 +496,41 @@
 <!-- Payment Modal -->
 <div class="pay-overlay" id="payOverlay">
   <div class="pay-box">
-    <div class="pay-title">Payment</div>
-    <div class="pay-sub">We accept literally any form of payment. Yes, really.</div>
 
-    <div class="pay-methods">
-      <div class="pay-method active" data-method="card">
-        <div class="pay-method-icon">💳</div>
-        <div class="pay-method-label">Card</div>
+    <!-- Tabs -->
+    <div class="pay-tabs">
+      <div class="pay-tab active" data-method="card">
+        <span class="pay-tab-icon">💳</span>Card
       </div>
-      <div class="pay-method" data-method="paypal">
-        <div class="pay-method-icon">🅿️</div>
-        <div class="pay-method-label">PayPal</div>
+      <div class="pay-tab" data-method="paypal">
+        <span class="pay-tab-icon">🅿️</span>PayPal
       </div>
-      <div class="pay-method" data-method="crypto">
-        <div class="pay-method-icon">₿</div>
-        <div class="pay-method-label">Crypto</div>
+      <div class="pay-tab" data-method="crypto">
+        <span class="pay-tab-icon">₿</span>Crypto
       </div>
-      <div class="pay-method" data-method="vibe">
-        <div class="pay-method-icon">✨</div>
-        <div class="pay-method-label">Vibes</div>
+      <div class="pay-tab" data-method="vibe">
+        <span class="pay-tab-icon">✨</span>Vibes
+      </div>
+      <div class="pay-tab joepass-tab" data-method="joepass">
+        <span class="pay-tab-icon">✦</span>Joe-Pass
       </div>
     </div>
 
-    <div class="pay-fields" id="payFields">
-      <!-- fields injected by JS based on method -->
+    <div class="pay-body" id="payBody">
+      <div class="pay-title" id="payTitle">Payment</div>
+      <div class="pay-sub" id="paySub">We accept literally any form of payment. Yes, really.</div>
+
+      <div class="pay-fields" id="payFields"></div>
+
+      <div class="pay-total-row">
+        <div class="pay-total-label" id="payTotalLabel">Charging today</div>
+        <div class="pay-total-num" id="payTotal">$0.00</div>
+      </div>
+
+      <button class="pay-btn" id="payBtn">🔒 Pay Now</button>
+      <div class="pay-secure" id="paySecure">256-bit encryption · PCI compliant · We totally know what that means</div>
     </div>
 
-    <div class="pay-total-row">
-      <div class="pay-total-label">Charging today</div>
-      <div class="pay-total-num" id="payTotal">$0.00</div>
-    </div>
-
-    <button class="pay-btn" id="payBtn">🔒 Pay Now</button>
-    <div class="pay-secure">256-bit encryption · PCI compliant · We totally know what that means</div>
   </div>
 </div>
 
@@ -670,89 +730,192 @@ renderMenuPanel();
 
 // ── Payment Modal ──
 const payFields = {
-  card: `
-    <div class="pay-input-wrap">
-      <div class="pay-label">Cardholder Name</div>
-      <input class="pay-input" placeholder="Joe Mama" />
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">Card Number</div>
-      <input class="pay-input" placeholder="1234 5678 9012 3456" maxlength="19" id="cardNum" />
-    </div>
-    <div class="pay-field-row">
+  card: {
+    title: 'Pay by Card',
+    sub: 'We accept literally any card. Yes, even that one.',
+    btnText: '🔒 Pay Now',
+    btnClass: '',
+    secure: '256-bit encryption · PCI compliant · We totally know what that means',
+    html: `
       <div class="pay-input-wrap">
-        <div class="pay-label">Expiry</div>
-        <input class="pay-input" placeholder="MM/YY" maxlength="5" id="cardExpiry" />
+        <div class="pay-label">Cardholder Name</div>
+        <input class="pay-input" placeholder="Joe Mama" />
       </div>
       <div class="pay-input-wrap">
-        <div class="pay-label">CVV</div>
-        <input class="pay-input" placeholder="Any 3 digits" maxlength="4" />
+        <div class="pay-label">Card Number</div>
+        <input class="pay-input" placeholder="1234 5678 9012 3456" maxlength="19" id="cardNum" />
       </div>
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">Delivery Address</div>
-      <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
-    </div>`,
-  paypal: `
-    <div class="pay-input-wrap">
-      <div class="pay-label">PayPal Email</div>
-      <input class="pay-input" placeholder="anything@whatever.com" />
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">PayPal Password</div>
-      <input class="pay-input" type="password" placeholder="we definitely won't store this" />
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">Delivery Address</div>
-      <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
-    </div>`,
-  crypto: `
-    <div class="pay-input-wrap">
-      <div class="pay-label">Wallet Address</div>
-      <input class="pay-input" placeholder="0x... or just smash the keyboard" />
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">Coin Type</div>
-      <input class="pay-input" placeholder="Bitcoin, Dogecoin, PizzaCoin..." />
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">Delivery Address</div>
-      <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
-    </div>`,
-  vibe: `
-    <div class="pay-input-wrap">
-      <div class="pay-label">Describe Your Vibe</div>
-      <input class="pay-input" placeholder="e.g. chill, chaotic, hungry" />
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">Spirit Animal</div>
-      <input class="pay-input" placeholder="This is required for vibe verification" />
-    </div>
-    <div class="pay-input-wrap">
-      <div class="pay-label">Delivery Address</div>
-      <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
-    </div>`,
+      <div class="pay-field-row">
+        <div class="pay-input-wrap">
+          <div class="pay-label">Expiry</div>
+          <input class="pay-input" placeholder="MM/YY" maxlength="5" id="cardExpiry" />
+        </div>
+        <div class="pay-input-wrap">
+          <div class="pay-label">CVV</div>
+          <input class="pay-input" placeholder="Any 3 digits" maxlength="4" />
+        </div>
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">Delivery Address</div>
+        <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
+      </div>`,
+  },
+  paypal: {
+    title: 'Pay with PayPal',
+    sub: 'We definitely won\'t do anything with your password.',
+    btnText: '🔒 Pay Now',
+    btnClass: '',
+    secure: 'PayPal encrypted · Your data is totally safe with us 👀',
+    html: `
+      <div class="pay-input-wrap">
+        <div class="pay-label">PayPal Email</div>
+        <input class="pay-input" placeholder="anything@whatever.com" />
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">PayPal Password</div>
+        <input class="pay-input" type="password" placeholder="we definitely won't store this" />
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">Delivery Address</div>
+        <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
+      </div>`,
+  },
+  crypto: {
+    title: 'Pay with Crypto',
+    sub: 'To the moon. Then to your door.',
+    btnText: '🔒 Pay Now',
+    btnClass: '',
+    secure: 'Decentralized · Trustless · We have no idea how this works',
+    html: `
+      <div class="pay-input-wrap">
+        <div class="pay-label">Wallet Address</div>
+        <input class="pay-input" placeholder="0x... or just smash the keyboard" />
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">Coin Type</div>
+        <input class="pay-input" placeholder="Bitcoin, Dogecoin, PizzaCoin..." />
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">Delivery Address</div>
+        <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
+      </div>`,
+  },
+  vibe: {
+    title: 'Pay with Vibes',
+    sub: 'No card? No problem. We accept vibes.',
+    btnText: '✨ Send Vibes',
+    btnClass: '',
+    secure: 'Vibe-verified · Spirit-animal authenticated · No refunds on bad energy',
+    html: `
+      <div class="pay-input-wrap">
+        <div class="pay-label">Describe Your Vibe</div>
+        <input class="pay-input" placeholder="e.g. chill, chaotic, hungry" />
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">Spirit Animal</div>
+        <input class="pay-input" placeholder="Required for vibe verification" />
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">Delivery Address</div>
+        <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
+      </div>`,
+  },
+  joepass: {
+    title: null, // handled separately
+  },
 };
 
 let activeMethod = 'card';
+let verifiedPass = null;
 
-function renderPayFields() {
-  document.getElementById('payFields').innerHTML = payFields[activeMethod];
+// Fake valid pass codes for demo — format JP-XXXXX-XX
+function isValidPassFormat(code) {
+  return /^JP-\d{5}-[A-Z]{2}$/i.test(code.trim().toUpperCase());
+}
 
-  // Auto-format card number
-  const cn = document.getElementById('cardNum');
-  if (cn) cn.addEventListener('input', e => {
-    let v = e.target.value.replace(/\D/g,'').substring(0,16);
-    e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
-  });
+function renderPayModal() {
+  const cfg = payFields[activeMethod];
+  const body = document.getElementById('payBody');
+  const totalNum = document.getElementById('payTotal');
+  const cartTotal = cart.reduce((s,c) => s + c.price * c.qty, 0);
 
-  // Auto-format expiry MM/YY
-  const ex = document.getElementById('cardExpiry');
-  if (ex) ex.addEventListener('input', e => {
-    let v = e.target.value.replace(/\D/g,'').substring(0,4);
-    if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
-    e.target.value = v;
-  });
+  if (activeMethod === 'joepass') {
+    body.classList.add('joepass-active');
+    document.getElementById('payTitle').textContent = 'Joe-Pass';
+    document.getElementById('paySub').textContent = 'Enter your pass number to redeem your free order.';
+    document.getElementById('payFields').innerHTML = `
+      <div class="joepass-panel">
+        <div class="joepass-badge">✦ Members Only</div>
+        <h3>Your order, on the house.</h3>
+        <p>Joe-Pass members get unlimited free pizza and delivery every month. Enter your pass number below to place this order at no charge.</p>
+      </div>
+      <div class="pass-input-wrap">
+        <div class="pay-label" style="text-align:center;color:rgba(245,166,35,0.6)">Pass Number</div>
+        <input class="pass-input" id="passCodeInput" placeholder="JP-XXXXX-XX" maxlength="11" />
+        <div class="pass-error" id="passError"></div>
+      </div>
+      <div class="pay-input-wrap">
+        <div class="pay-label">Delivery Address</div>
+        <input class="pay-input pay-addr-field" placeholder="Where are we sending this?" />
+      </div>`;
+
+    // Auto-uppercase + format pass input
+    setTimeout(() => {
+      const inp = document.getElementById('passCodeInput');
+      if (!inp) return;
+      if (verifiedPass) {
+        inp.value = verifiedPass;
+        inp.disabled = true;
+      }
+      inp.addEventListener('input', e => {
+        let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+        if (v.length > 2) v = v.substring(0,2) + '-' + v.substring(2);
+        if (v.length > 8) v = v.substring(0,8) + '-' + v.substring(8);
+        e.target.value = v.substring(0,11);
+        document.getElementById('passError').textContent = '';
+      });
+    }, 0);
+
+    // Total shows FREE
+    totalNum.textContent = verifiedPass ? 'FREE' : `$${cartTotal.toFixed(2)}`;
+    totalNum.className = 'pay-total-num' + (verifiedPass ? ' free' : '');
+    document.getElementById('payTotalLabel').textContent = verifiedPass ? 'Covered by Joe-Pass' : 'Would be charged';
+
+    const btn = document.getElementById('payBtn');
+    btn.className = 'pay-btn gold-btn';
+    btn.textContent = verifiedPass ? '✦ Redeem Pass & Order' : '✦ Verify Pass';
+    document.getElementById('paySecure').textContent = 'Joe-Pass · Unlimited pizza · No charge · Free delivery';
+
+  } else {
+    body.classList.remove('joepass-active');
+    verifiedPass = null;
+    document.getElementById('payTitle').textContent = cfg.title;
+    document.getElementById('paySub').textContent = cfg.sub;
+    document.getElementById('payFields').innerHTML = cfg.html;
+
+    // Auto-format card number
+    const cn = document.getElementById('cardNum');
+    if (cn) cn.addEventListener('input', e => {
+      let v = e.target.value.replace(/\D/g,'').substring(0,16);
+      e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+    });
+    // Auto-format expiry
+    const ex = document.getElementById('cardExpiry');
+    if (ex) ex.addEventListener('input', e => {
+      let v = e.target.value.replace(/\D/g,'').substring(0,4);
+      if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+      e.target.value = v;
+    });
+
+    totalNum.textContent = `$${cartTotal.toFixed(2)}`;
+    totalNum.className = 'pay-total-num';
+    document.getElementById('payTotalLabel').textContent = 'Charging today';
+
+    const btn = document.getElementById('payBtn');
+    btn.className = 'pay-btn';
+    btn.innerHTML = cfg.btnText;
+    document.getElementById('paySecure').textContent = cfg.secure;
+  }
 
   // Sync delivery address from cart panel
   const typedAddr = document.getElementById('deliveryAddr')?.value?.trim();
@@ -760,8 +923,7 @@ function renderPayFields() {
     const addrInput = document.querySelector('.pay-addr-field');
     if (addrInput) addrInput.value = typedAddr;
   }
-
-  // Keep address fields in sync both ways
+  // Two-way sync
   const addrInput = document.querySelector('.pay-addr-field');
   const cartAddr = document.getElementById('deliveryAddr');
   if (addrInput && cartAddr) {
@@ -769,64 +931,79 @@ function renderPayFields() {
   }
 }
 
-document.querySelectorAll('.pay-method').forEach(m => {
-  m.addEventListener('click', () => {
-    document.querySelectorAll('.pay-method').forEach(x => x.classList.remove('active'));
-    m.classList.add('active');
-    activeMethod = m.dataset.method;
-    renderPayFields();
+// Tab clicks
+document.querySelectorAll('.pay-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeMethod = tab.dataset.method;
+    renderPayModal();
   });
 });
 
 document.getElementById('checkoutBtn').addEventListener('click', () => {
   const total = cart.reduce((s,c) => s + c.price * c.qty, 0);
   document.getElementById('payTotal').textContent = '$' + total.toFixed(2);
-  renderPayFields(); // address sync happens inside renderPayFields now
+  activeMethod = 'card';
+  document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.pay-tab[data-method="card"]').classList.add('active');
+  renderPayModal();
   document.getElementById('payOverlay').classList.add('show');
 });
 
 document.getElementById('payBtn').addEventListener('click', async () => {
   const btn = document.getElementById('payBtn');
-  btn.disabled = true;
 
-  // Multi-step processing messages
-  const steps = ['<div class="processing-spinner"></div> Verifying payment...', '<div class="processing-spinner"></div> Contacting the oven...', '<div class="processing-spinner"></div> Dispatching driver...'];
+  // Joe-Pass verify step
+  if (activeMethod === 'joepass' && !verifiedPass) {
+    const inp = document.getElementById('passCodeInput');
+    const code = inp?.value?.trim() || '';
+    if (!isValidPassFormat(code)) {
+      document.getElementById('passError').textContent = 'Invalid pass number. Format: JP-XXXXX-XX';
+      inp.style.borderColor = 'rgba(255,107,107,0.6)';
+      setTimeout(() => { inp.style.borderColor = ''; }, 2000);
+      return;
+    }
+    // Valid — show verified state
+    verifiedPass = code.toUpperCase();
+    renderPayModal();
+    return;
+  }
+
+  // Place order
+  btn.disabled = true;
+  const isPass = activeMethod === 'joepass';
+
+  const steps = isPass
+    ? ['<div class="processing-spinner"></div> Verifying pass...', '<div class="processing-spinner"></div> Contacting the oven...', '<div class="processing-spinner"></div> Dispatching driver...']
+    : ['<div class="processing-spinner"></div> Verifying payment...', '<div class="processing-spinner"></div> Contacting the oven...', '<div class="processing-spinner"></div> Dispatching driver...'];
+
   let stepIdx = 0;
   btn.innerHTML = steps[0];
-  const stepInterval = setInterval(() => {
-    stepIdx = (stepIdx + 1) % steps.length;
-    btn.innerHTML = steps[stepIdx];
-  }, 600);
+  const stepInterval = setInterval(() => { stepIdx=(stepIdx+1)%steps.length; btn.innerHTML=steps[stepIdx]; }, 600);
 
-  // Grab typed address before async stuff
   const typedAddr = document.querySelector('.pay-addr-field')?.value?.trim()
-    || document.getElementById('deliveryAddr')?.value?.trim()
-    || '';
+    || document.getElementById('deliveryAddr')?.value?.trim() || '';
 
-  // Fetch IP location
   let locationLine = typedAddr || 'your location';
   let ipLine = '';
-  let etaMin = 25 + Math.floor(Math.random() * 15);
+  const etaMin = 25 + Math.floor(Math.random() * 15);
 
   if (!typedAddr) {
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
-      const city = data.city || '';
-      const region = data.region || '';
-      const country = data.country_name || '';
-      const ip = data.ip || '';
-      if (city) locationLine = `${city}${region ? ', ' + region : ''}${country ? ', ' + country : ''}`;
+      const city = data.city||'', region = data.region||'', country = data.country_name||'', ip = data.ip||'';
+      if (city) locationLine = `${city}${region?', '+region:''}${country?', '+country:''}`;
       if (ip) ipLine = ip;
-    } catch(e) { /* silently fail */ }
+    } catch(e) {}
   }
 
   await new Promise(r => setTimeout(r, 1800));
   clearInterval(stepInterval);
-
   document.getElementById('payOverlay').classList.remove('show');
 
-  const id = Math.floor(Math.random() * 900000) + 100000;
+  const id = Math.floor(Math.random()*900000)+100000;
   document.getElementById('reId').textContent = `ORDER #${id}`;
   document.getElementById('reItems').innerHTML = cart.map(c =>
     `${c.icon||'🍕'} ${c.label||c.name} × ${c.qty} — $${(c.price*c.qty).toFixed(2)}`
@@ -834,20 +1011,19 @@ document.getElementById('payBtn').addEventListener('click', async () => {
 
   const total = cart.reduce((s,c) => s + c.price * c.qty, 0);
 
-  // Location line: typed address shows as-is, IP-detected shows with the ip reveal
   const locationHtml = typedAddr
     ? `📍 Delivering to: <strong style="color:white">${typedAddr}</strong>`
     : `📍 Delivering to: <strong style="color:white">${locationLine}</strong>`
       + (ipLine ? `<br><span style="font-size:11px;opacity:0.45;font-family:monospace">IP: ${ipLine}</span>` : '');
 
   document.getElementById('reLocation').innerHTML = locationHtml;
-  document.getElementById('reEta').innerHTML =
-    `🕐 Estimated arrival: <strong style="color:white">${etaMin} minutes</strong>`;
-  document.getElementById('reCharged').innerHTML =
-    `💳 Payment accepted: <strong style="color:#f5a623">$${total.toFixed(2)}</strong> charged successfully`;
+  document.getElementById('reEta').innerHTML = `🕐 Estimated arrival: <strong style="color:white">${etaMin} minutes</strong>`;
+  document.getElementById('reCharged').innerHTML = isPass
+    ? `✦ Covered by Joe-Pass <strong style="color:#f5a623">${verifiedPass}</strong> — $0.00 charged`
+    : `💳 Payment accepted: <strong style="color:#f5a623">$${total.toFixed(2)}</strong> charged successfully`;
 
+  verifiedPass = null;
   document.getElementById('receiptOverlay').classList.add('show');
-
   btn.disabled = false;
   btn.innerHTML = '🔒 Pay Now';
 });
